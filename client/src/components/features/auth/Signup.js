@@ -16,65 +16,8 @@ import { analytics } from "../../../config/firebaseConfig";
 import Tooltip from "../../common/ToolTip";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../styles/components/auth/Signup.css";
-import {
-  formatDobDate,
-  handleDobDateSubmit,
-} from "../../../services/dateService";
 import Spinner from "../../common/Spinner";
 import { getLatestPrivacyPolicy, getLatestTermsOfService } from "../../../services/agreementService";
-
-const statesList = [
-  "Alabama",
-  "Alaska",
-  "Arizona",
-  "Arkansas",
-  "California",
-  "Colorado",
-  "Connecticut",
-  "Delaware",
-  "Florida",
-  "Georgia",
-  "Hawaii",
-  "Idaho",
-  "Illinois",
-  "Indiana",
-  "Iowa",
-  "Kansas",
-  "Kentucky",
-  "Louisiana",
-  "Maine",
-  "Maryland",
-  "Massachusetts",
-  "Michigan",
-  "Minnesota",
-  "Mississippi",
-  "Missouri",
-  "Montana",
-  "Nebraska",
-  "Nevada",
-  "New Hampshire",
-  "New Jersey",
-  "New Mexico",
-  "New York",
-  "North Carolina",
-  "North Dakota",
-  "Ohio",
-  "Oklahoma",
-  "Oregon",
-  "Pennsylvania",
-  "Rhode Island",
-  "South Carolina",
-  "South Dakota",
-  "Tennessee",
-  "Texas",
-  "Utah",
-  "Vermont",
-  "Virginia",
-  "Washington",
-  "West Virginia",
-  "Wisconsin",
-  "Wyoming",
-];
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -89,13 +32,6 @@ const Signup = () => {
   const [ppChecked, setPpChecked] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
-  const [formattedDate, setFormattedDate] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -168,18 +104,6 @@ const Signup = () => {
         });
       }
 
-      // Update the user's address and date of birth
-      await updateUser(mongoUser._id, {
-        address: {
-          address1,
-          address2,
-          city,
-          state,
-          zip,
-        },
-        DOB: formattedDate,
-      });
-
       navigate("/email-verification");
     } catch (error) {
       console.error("Error during authentication:", error.message);
@@ -250,8 +174,7 @@ const Signup = () => {
           alert("Failed to create a new user. Please try again.");
         }
       }
-      // window.location.reload();
-      navigate("/sms-verification");
+      navigate("/campaigns");
     } catch (error) {
       console.error("Error during Google authentication:", error.message);
       setLoading(false);
@@ -387,89 +310,6 @@ const Signup = () => {
                 {showConfirmPassword ? "Hide" : "Show"}
               </button>
             </div>
-          </div>
-
-          <div className="form-group">
-            <label>Address Line 1:</label>
-            <input
-              type="text"
-              className="form-input"
-              value={address1}
-              onChange={(e) => setAddress1(e.target.value)}
-              placeholder="Address Line 1"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Address Line 2:</label>
-            <input
-              type="text"
-              className="form-input"
-              value={address2}
-              onChange={(e) => setAddress2(e.target.value)}
-              placeholder="Address Line 2"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>City:</label>
-            <input
-              type="text"
-              className="form-input"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="City"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>State:</label>
-            <select
-              className="form-input"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            >
-              <option value="">Select a State</option>
-              {statesList.map((state) => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Zip:</label>
-            <input
-              type="text"
-              className="form-input"
-              value={zip}
-              onChange={(e) => setZip(e.target.value)}
-              placeholder="Zip"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Date of Birth:</label>
-            <input
-              type="tel"
-              className="form-input"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(formatDobDate(e.target.value))}
-              placeholder="MM/DD/YYYY"
-              pattern="\d{2}/\d{2}/\d{4}"
-              maxLength="10"
-              onBlur={(e) => {
-                const formatted = handleDobDateSubmit(e.target.value);
-                if (formatted) setFormattedDate(formatted);
-              }}
-              name="bday"
-              autoComplete="bday"
-              required
-            />
           </div>
 
           <div className="form-group">
