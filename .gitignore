@@ -1,0 +1,8 @@
+.env
+node_modules
+Internal_Instructions.md
+TODO.md
+.vscode
+firebaseServiceAccountKey.json
+session_secret.txt
+daily_backup_output
