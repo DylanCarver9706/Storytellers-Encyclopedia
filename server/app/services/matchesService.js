@@ -1099,7 +1099,7 @@ const matchConcluded = async (matchId, data) => {
     // });
 
     console.log(
-      "Tournament has ended and all user earnedCredits have been reset to 0.00. Congrats RL Bets!"
+      "Tournament has ended and all user earnedCredits have been reset to 0.00. Congrats Storyteller's Encyclopedia!"
     );
   }
   await broadcastUpdate("users", "updateUsers", { users: await getAllUsers() });

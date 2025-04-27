@@ -66,8 +66,8 @@ const createUser = async (userData) => {
 
   await sendEmail(
     userData.email,
-    "Welcome to RL Bets",
-    `Hello ${userData.name},\n\nWelcome to RL Bets! We're excited to have you on board. Your account is now active, and you can start using our services right away.\n\nIf you have any questions or need assistance, please don't hesitate to reach out to our support team.\n\nBest regards,\nThe RL Bets Team`,
+    "Welcome to Storyteller's Encyclopedia",
+    `Hello ${userData.name},\n\nWelcome to Storyteller's Encyclopedia! We're excited to have you on board. Your account is now active, and you can start using our services right away.\n\nIf you have any questions or need assistance, please don't hesitate to reach out to our support team.\n\nBest regards,\nThe Storyteller's Encyclopedia Team`,
     null,
     null
   );
@@ -76,7 +76,7 @@ const createUser = async (userData) => {
     user: userDoc._id.toString(),
     type: "welcome",
     message:
-      "Welcome to RL Bets! Feel free to explore our platform and start betting on your favorite teams or players. Good luck!",
+      "Welcome to Storyteller's Encyclopedia! Feel free to explore our platform and start betting on your favorite teams or players. Good luck!",
   });
 
   await createUserNotificationLog({
@@ -209,7 +209,7 @@ const sendIdentityVerificationResults = async (submissionData) => {
   let bodyHtml = "";
   if (submissionData.status === "verified") {
     bodyHtml = `
-    <p>Congratulations! Your identity verification has been approved. You can now start betting on <a href="${process.env.DEV_CLIENT_URL}/Wagers">RL bets</a>!</p>
+    <p>Congratulations! Your identity verification has been approved. You can now start betting on <a href="${process.env.DEV_CLIENT_URL}/Wagers">Storyteller's Encyclopedia</a>!</p>
     </p>
   `;
   } else if (submissionData.status === "denied") {
@@ -220,7 +220,7 @@ const sendIdentityVerificationResults = async (submissionData) => {
 
   await sendEmail(
     updatedUser.email,
-    "RL Bets Identity Verification Results",
+    "Storyteller's Encyclopedia Identity Verification Results",
     null,
     bodyHtml,
     null

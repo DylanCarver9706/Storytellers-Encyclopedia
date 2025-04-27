@@ -37,7 +37,8 @@ const TermsOfService = () => {
       {agreement ? (
         <div>
           <h1>
-            RL Bets – {agreement.name} – Version: {agreement.version}
+            Storyteller's Encyclopedia – {agreement.name} – Version:{" "}
+            {agreement.version}
           </h1>
           <div dangerouslySetInnerHTML={{ __html: agreement.content }} />
         </div>

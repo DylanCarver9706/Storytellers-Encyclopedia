@@ -8,9 +8,9 @@ const AppOutage = () => {
         <div className="outage-icon">🔧</div>
         <h1 className="outage-title">Service Temporarily Unavailable</h1>
         <p className="outage-message">
-          RL Bets is currently undergoing maintenance or experiencing technical
-          difficulties. Our team is working to restore service as quickly as
-          possible.
+          Storyteller's Encyclopedia is currently undergoing maintenance or
+          experiencing technical difficulties. Our team is working to restore
+          service as quickly as possible.
         </p>
         <span className="outage-status">Please check back later</span>
       </div>

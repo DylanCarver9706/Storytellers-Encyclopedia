@@ -30,7 +30,7 @@ const Hero = () => {
       {/* Hero Section */}
       <div className="hero-section">
         <div className="text-container">
-          <h1 className="hero-title">Welcome to RL Bets</h1>
+          <h1 className="hero-title">Welcome to Storyteller's Encyclopedia</h1>
           <p className="hero-subtitle">
             Compete, Bet, and Win Big during Rocket League Esports Tournaments!
           </p>

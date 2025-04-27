@@ -17,7 +17,8 @@ const SomethingWentWrong = () => {
           Whoopsie-Daisy! Something went wrong.
         </h1>
         <p className="something-wrong-message">
-          A report has been sent to RL Bets to investigate why this happened.
+          A report has been sent to Storyteller's Encyclopedia to investigate
+          why this happened.
         </p>
         <p className="something-wrong-message">
           If you would like to provide additional context to this crash, please

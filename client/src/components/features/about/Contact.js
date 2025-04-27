@@ -7,7 +7,8 @@ const Contact = () => {
         <h1 className="about-header">Contact</h1>
         <div className="contact-content">
           <p>
-            For all inquiries, business or other, please email RL Bets at{" "}
+            For all inquiries, business or other, please email Storyteller's
+            Encyclopedia at{" "}
             <a
               href={`mailto:${process.env.REACT_APP_BUSINESS_EMAIL}`}
               className="contact-email"

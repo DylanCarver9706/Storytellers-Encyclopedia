@@ -7,10 +7,10 @@ const About = () => {
         <h1 className="about-header">About Us</h1>
         <div className="about-content">
           <p>
-            <span className="gradient-text">RL Bets</span> is a platform to
-            place bets on professional Rocket League tournaments. The idea was
-            always there. Rocket League is a sport with a ball, so it is only
-            fair that we should be able to bet on that.
+            <span className="gradient-text">Storyteller's Encyclopedia</span> is
+            a platform to place bets on professional Rocket League tournaments.
+            The idea was always there. Rocket League is a sport with a ball, so
+            it is only fair that we should be able to bet on that.
           </p>
           <p>
             The motivation to make this came when I attended RLCS in 2024 in

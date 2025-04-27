@@ -82,7 +82,7 @@ const PlaidIdentityVerification = () => {
           );
         }
         alert(
-          "Identity Verification failed. RL Bets will review your information and approve or deny your account manually."
+          "Identity Verification failed. Storyteller's Encyclopedia will review your information and approve or deny your account manually."
         );
       }
     } catch (error) {

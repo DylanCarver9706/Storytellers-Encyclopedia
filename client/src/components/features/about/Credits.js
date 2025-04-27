@@ -81,7 +81,7 @@ const Credits = () => {
               top: "100%",
             }}
           >
-            <h2 className="credits-title">RL Bets</h2>
+            <h2 className="credits-title">Storyteller's Encyclopedia</h2>
             {[...dylanRoles, ...otherRoles].map((role, index) => {
               const [title, name] = role.split(": ");
               return (
