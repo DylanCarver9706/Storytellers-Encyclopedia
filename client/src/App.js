@@ -3,9 +3,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./config/firebaseConfig";
 import { usePageTracking } from "./services/firebaseService";
 import {
-  getMongoUserDataByFirebaseId,
-  userAgeLegal,
-  updateUser,
+  getMongoUserDataByFirebaseId
 } from "./services/userService";
 import {
   getLatestPrivacyPolicy,
@@ -13,49 +11,28 @@ import {
 } from "./services/agreementService";
 import { useUser } from "./contexts/UserContext";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import Wagers from "./components/features/core/Wagers";
 import Profile from "./components/features/core/Profile";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
-import CreateWager from "./components/features/admin/CreateWager";
-import TournamentHistory from "./components/features/tournaments/TournamentHistory";
-import CreditShop from "./components/features/core/CreditShop";
-import LifetimeLeaderboard from "./components/features/leaderboards/LifetimeLeaderboard";
-import CurrentTournamentLeaderboard from "./components/features/leaderboards/CurrentTournamentLeaderboard";
-import Log from "./components/features/admin/Log";
-import Admin from "./components/features/admin/Admin";
 import EmailVerification from "./components/features/userVerification/EmailVerification";
 import Credits from "./components/features/about/Credits";
 import BugForm from "./components/features/feedback/BugForm";
 import FeatureForm from "./components/features/feedback/FeatureForm";
 import FeedbackForm from "./components/features/feedback/FeedbackForm";
 import Hero from "./components/features/about/Hero";
-import IllegalState from "./components/features/permissionFailure/IllegalState";
-import LocationPermissionRequired from "./components/features/permissionFailure/LocationPermissionRequired";
-import IllegalAge from "./components/features/permissionFailure/IllegalAge";
 import SomethingWentWrong from "./components/features/errorHandling/SomethingWentWrong";
 import AppOutage from "./components/features/errorHandling/AppOutage";
-import CurrentTournament from "./components/features/tournaments/CurrentTournament";
 import PrivacyPolicy from "./components/features/legal/PrivacyPolicy";
 import TermsOfService from "./components/features/legal/TermsOfService";
 import Agreements from "./components/features/legal/Agreements";
 import PageNotFound from "./components/features/errorHandling/PageNotFound";
 import SuspendedUser from "./components/features/permissionFailure/SuspendedUser";
-import AdminEmail from "./components/features/admin/AdminEmail";
 import PrivateRoute from "./components/features/routes/PrivateRoute";
 import Signup from "./components/features/auth/Signup";
 import Login from "./components/features/auth/Login";
 import ForgotPassword from "./components/features/auth/ForgotPassword";
-import AdminIdentityVerification from "./components/features/admin/AdminIdentityVerification";
-import IdentityVerification from "./components/features/userVerification/IdentityVerification";
-import SmsVerification from "./components/features/userVerification/SmsVerification";
-import Instructions from "./components/features/core/Instructions";
 import About from "./components/features/about/About";
 import Contact from "./components/features/about/Contact";
-import {
-  checkGeolocationPermission,
-  userLocationLegal,
-} from "./services/locationService";
 import Spinner from "./components/common/Spinner";
 
 // Deprecated components
@@ -103,8 +80,6 @@ function App() {
           if (process.env.REACT_APP_ENV === "development")
             console.log("firebaseUser", firebaseUser);
 
-          const userLocationMeta = await userLocationLegal();
-
           // Destructure the user object to remove the _id field
           const { _id, ...userWithoutId } = mongoUser;
 
@@ -112,20 +87,7 @@ function App() {
             firebaseUserId: firebaseUser.uid,
             mongoUserId: _id,
             ...userWithoutId,
-            locationValid: userLocationMeta?.allowed,
-            currentState: userLocationMeta?.state,
-            locationPermissionGranted: await checkGeolocationPermission(),
           };
-
-          // Check if the user's age is valid
-          if (mongoUser.ageValid === false && mongoUser.DOB) {
-            const userAgeLegalBool = await userAgeLegal(
-              userLocationMeta?.state,
-              mongoUser.DOB
-            );
-            await updateUser(mongoUser._id, { ageValid: userAgeLegalBool });
-            userObj.ageValid = userAgeLegalBool;
-          }
 
           // Set the user state with the updated user object
           setUser(userObj);
@@ -283,16 +245,10 @@ function App() {
     return <Spinner />;
   }
 
-  const locationPermissionGranted = user?.locationPermissionGranted;
-  const locationValid = user?.locationValid;
-  const ageValid = user?.ageValid;
   const emailVerified = user?.emailVerificationStatus === "verified";
-  const idvVerified = user?.idvStatus === "verified";
-  const smsVerified = user?.smsVerificationStatus === "verified";
   const loggedIn =
     !loading && auth?.currentUser !== null && user?.mongoUserId !== null;
   const accountSuspended = user?.accountStatus === "suspended";
-  const admin = loggedIn && user?.userType === "admin";
   const requirePp =
     loggedIn && user?.pp && user?.pp.version !== privacyPolicyVersion;
   const requireTos =
@@ -315,29 +271,12 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/app-outage" element={<AppOutage />} />
-          <Route path="/instructions" element={<Instructions />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           {/* Catch-all route for undefined paths */}
           <Route path="*" element={<PageNotFound />} />
 
           {/* Protected Routes */}
-          <Route
-            path="/wagers"
-            element={
-              <PrivateRoute authorized={loggedIn}>
-                <Wagers />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/create-wager"
-            element={
-              <PrivateRoute authorized={loggedIn}>
-                <CreateWager />
-              </PrivateRoute>
-            }
-          />
           <Route
             path="/profile"
             element={
@@ -354,28 +293,6 @@ function App() {
                 redirectTo="/wagers"
               >
                 <EmailVerification />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/identity-verification"
-            element={
-              <PrivateRoute
-                authorized={loggedIn && !idvVerified}
-                redirectTo="/wagers"
-              >
-                <IdentityVerification />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/sms-verification"
-            element={
-              <PrivateRoute
-                authorized={loggedIn && !smsVerified}
-                redirectTo="/wagers"
-              >
-                <SmsVerification />
               </PrivateRoute>
             }
           />
@@ -399,79 +316,6 @@ function App() {
             }
           />
           <Route
-            path="/tournament-history"
-            element={
-              <PrivateRoute authorized={loggedIn}>
-                <TournamentHistory />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/credit-shop"
-            element={
-              <PrivateRoute authorized={loggedIn}>
-                <CreditShop />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/lifetime-leaderboard"
-            element={
-              <PrivateRoute authorized={loggedIn}>
-                <LifetimeLeaderboard />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/tournament-leaderboard"
-            element={
-              <PrivateRoute authorized={loggedIn}>
-                <CurrentTournamentLeaderboard />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/tournament"
-            element={
-              <PrivateRoute authorized={loggedIn}>
-                <CurrentTournament />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/illegal-state"
-            element={
-              <PrivateRoute
-                authorized={loggedIn && !locationValid}
-                redirectTo="/wagers"
-              >
-                <IllegalState />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/location-permission-required"
-            element={
-              <PrivateRoute
-                authorized={loggedIn && !locationPermissionGranted}
-                redirectTo="/wagers"
-              >
-                <LocationPermissionRequired />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/illegal-age"
-            element={
-              <PrivateRoute
-                authorized={loggedIn && !ageValid}
-                redirectTo="/wagers"
-              >
-                <IllegalAge />
-              </PrivateRoute>
-            }
-          />
-          <Route
             path="/account-suspended"
             element={
               <PrivateRoute
@@ -479,39 +323,6 @@ function App() {
                 redirectTo="/wagers"
               >
                 <SuspendedUser />
-              </PrivateRoute>
-            }
-          />
-          {/* Admin Routes */}
-          <Route
-            path="/log"
-            element={
-              <PrivateRoute authorized={loggedIn && admin}>
-                <Log />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <PrivateRoute authorized={loggedIn && admin}>
-                <Admin />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin-email"
-            element={
-              <PrivateRoute authorized={loggedIn && admin}>
-                <AdminEmail />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin-identity-verification"
-            element={
-              <PrivateRoute authorized={loggedIn && admin}>
-                <AdminIdentityVerification />
               </PrivateRoute>
             }
           />

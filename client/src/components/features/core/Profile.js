@@ -13,7 +13,6 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { useUser } from "../../../contexts/UserContext";
-import TransactionHistory from "./TransactionHistory";
 import { auth } from "../../../config/firebaseConfig";
 import "../../../styles/components/core/Profile.css";
 import Tooltip from "../../common/ToolTip";
@@ -302,10 +301,6 @@ const Profile = () => {
                 </button>
               </div>
             </div>
-          </div>
-
-          <div className="profile-section">
-            <TransactionHistory />
           </div>
         </div>
       ) : (
