@@ -1,0 +1,161 @@
+import React, { useState, useEffect } from "react";
+import {
+  getAllCampaigns,
+  createCampaign,
+  updateCampaign,
+  deleteCampaign,
+} from "../../../services/campaignsService";
+import "../../../styles/components/core/Campaigns.css";
+
+const Campaigns = () => {
+  const [campaigns, setCampaigns] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCampaign, setEditingCampaign] = useState(null);
+  const [formData, setFormData] = useState({
+    title: "",
+  });
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  const fetchCampaigns = async () => {
+    try {
+      const data = await getAllCampaigns();
+      setCampaigns(data);
+    } catch (error) {
+      console.error("Error fetching campaigns:", error);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingCampaign) {
+        await updateCampaign(editingCampaign._id, formData);
+      } else {
+        await createCampaign(formData);
+      }
+      fetchCampaigns();
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error saving campaign:", error);
+    }
+  };
+
+  const handleEdit = (campaign) => {
+    setEditingCampaign(campaign);
+    setFormData({
+      title: campaign.title,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this campaign?")) {
+      try {
+        await deleteCampaign(id);
+        fetchCampaigns();
+      } catch (error) {
+        console.error("Error deleting campaign:", error);
+      }
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingCampaign(null);
+    setFormData({
+      title: "",
+    });
+  };
+
+  return (
+    <div className="campaigns-container">
+      <div className="campaigns-header">
+        <h1 className="campaigns-title">Campaigns</h1>
+        <button
+          className="create-campaign-btn"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Create Campaign
+        </button>
+      </div>
+
+      <div className="campaigns-grid">
+        {campaigns.map((campaign) => (
+          <div key={campaign._id} className="campaign-card">
+            <h2 className="campaign-title">{campaign.title}</h2>
+            <div className="campaign-actions">
+              <button
+                className="action-btn edit-btn"
+                onClick={() => handleEdit(campaign)}
+              >
+                Edit
+              </button>
+              <button
+                className="action-btn delete-btn"
+                onClick={() => handleDelete(campaign._id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">
+                {editingCampaign ? "Edit Campaign" : "Create Campaign"}
+              </h2>
+              <button className="close-btn" onClick={handleCloseModal}>
+                ×
+              </button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label className="form-label" htmlFor="title">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  className="form-input"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="action-btn cancel-btn"
+                  onClick={handleCloseModal}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="action-btn save-btn">
+                  {editingCampaign ? "Update" : "Create"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Campaigns;

@@ -34,6 +34,7 @@ import ForgotPassword from "./components/features/auth/ForgotPassword";
 import About from "./components/features/about/About";
 import Contact from "./components/features/about/Contact";
 import Spinner from "./components/common/Spinner";
+import Campaigns from "./components/features/core/Campaigns";
 
 // Deprecated components
 // import PlaidIdentityVerification from "./components/PlaidIdentityVerification"; Deprecated
@@ -139,10 +140,7 @@ function App() {
         return;
       }
 
-      // If user has not verified email or IDV, redirect to respective pages
-      if (auth.currentUser && user?.locationPermissionGranted === false) {
-        navigate("/location-permission-required");
-      } else if (
+      if (
         auth.currentUser &&
         user?.emailVerificationStatus &&
         user?.emailVerificationStatus !== "verified"
@@ -150,35 +148,16 @@ function App() {
         navigate("/email-verification");
       } else if (
         auth.currentUser &&
-        !user?.phoneNumber &&
-        user?.smsVerificationStatus &&
-        user?.smsVerificationStatus !== "verified"
-      ) {
-        navigate("/sms-verification");
-      } else if (
-        auth.currentUser &&
-        user?.idvStatus &&
-        ["review", "unverified"].includes(user?.idvStatus)
-      ) {
-        navigate("/identity-verification");
-      } else if (
-        auth.currentUser &&
         (user?.pp.version !== privacyPolicyVersion ||
           user.tos.version !== termsOfServiceVersion)
       ) {
         navigate("/agreements");
-      } else if (auth.currentUser && user?.locationValid === false) {
-        navigate("/illegal-state");
-      } else if (auth.currentUser && user?.ageValid === false) {
-        navigate("/illegal-age");
       } else if (
         auth.currentUser &&
         user?.accountStatus &&
         user?.accountStatus === "suspended"
       ) {
         navigate("/account-suspended");
-      } else if (auth.currentUser && user?.viewedInstructions === false) {
-        navigate("/instructions");
       }
     };
     routeUser();
@@ -282,6 +261,14 @@ function App() {
             element={
               <PrivateRoute authorized={loggedIn}>
                 <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/campaigns"
+            element={
+              <PrivateRoute authorized={loggedIn}>
+                <Campaigns />
               </PrivateRoute>
             }
           />
