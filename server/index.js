@@ -89,31 +89,16 @@ const startServer = async () => {
 
     // Import routes
     app.use("/api/users", require("./app/routes/usersRoutes"));
-    app.use("/api/logs", require("./app/routes/logsRoutes"));
-    app.use("/api/plaid", require("./app/routes/plaidRoutes"));
+    app.use("/api/campaigns", require("./app/routes/campaignsRoutes"));
+    app.use("/api/timelines", require("./app/routes/timelinesRoutes"));
+    app.use("/api/characters", require("./app/routes/charactersRoutes"));
+    app.use("/api/families", require("./app/routes/familiesRoutes"));
+    app.use("/api/events", require("./app/routes/eventsRoutes"));
     app.use("/api/stripe", require("./app/routes/stripeRoutes"));
-    app.use("/api/geofencing", require("./app/routes/geofencingRoutes"));
-    app.use(
-      "/api/age-restriction",
-      require("./app/routes/ageRestrictionRoutes")
-    );
-    app.use("/api/wagers", require("./app/routes/wagersRoutes"));
-    app.use("/api/bets", require("./app/routes/betsRoutes"));
-    app.use("/api/tournaments", require("./app/routes/tournamentsRoutes"));
-    app.use("/api/series", require("./app/routes/seriesRoutes"));
-    app.use("/api/matches", require("./app/routes/matchesRoutes"));
-    app.use("/api/teams", require("./app/routes/teamsRoutes"));
-    app.use("/api/players", require("./app/routes/playersRoutes"));
-    app.use("/api/data-trees", require("./app/routes/dataTreeRoutes"));
     app.use("/api/jira", require("./app/routes/jiraRoutes"));
     app.use("/api/server-utils", require("./app/routes/serverUtilsRoutes"));
-    app.use("/api/promotions", require("./app/routes/promotionsRoutes"));
-    app.use("/api/leaderboards", require("./app/routes/leaderboardRoutes"));
-    app.use("/api/transactions", require("./app/routes/transactionsRoutes"));
     app.use("/api/agreements", require("./app/routes/agreementsRoutes"));
-    app.use("/api/openai", require("./app/routes/openaiRoutes"));
     app.use("/api/firebase", require("./app/routes/firebaseRoutes"));
-    app.use("/api/products", require("./app/routes/productsRoutes"));
 
     app.use(errorLogger);
 
