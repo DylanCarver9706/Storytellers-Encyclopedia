@@ -20,7 +20,11 @@ const createEvent = async (eventData) => {
 };
 
 const updateEvent = async (id, eventData) => {
-  return await updateMongoDocument(collections.eventsCollection, id, eventData);
+  return await updateMongoDocument(
+    collections.eventsCollection,
+    id,
+    { $set: eventData }
+  );
 };
 
 const deleteEvent = async (id) => {

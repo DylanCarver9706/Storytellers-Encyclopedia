@@ -23,7 +23,7 @@ const updateFamily = async (id, familyData) => {
   return await updateMongoDocument(
     collections.familiesCollection,
     id,
-    familyData
+    { $set: familyData }
   );
 };
 

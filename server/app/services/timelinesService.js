@@ -26,7 +26,7 @@ const updateTimeline = async (id, timelineData) => {
   return await updateMongoDocument(
     collections.timelinesCollection,
     id,
-    timelineData
+    { $set: timelineData }
   );
 };
 

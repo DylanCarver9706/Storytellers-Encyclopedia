@@ -26,7 +26,7 @@ const updateCampaign = async (id, campaignData) => {
   return await updateMongoDocument(
     collections.campaignsCollection,
     id,
-    campaignData
+    { $set: campaignData }
   );
 };
 

@@ -26,7 +26,7 @@ const updateCharacter = async (id, characterData) => {
   return await updateMongoDocument(
     collections.charactersCollection,
     id,
-    characterData
+    { $set: characterData }
   );
 };
 
