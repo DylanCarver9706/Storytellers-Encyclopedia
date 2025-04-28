@@ -289,3 +289,22 @@ export const dismissNotification = async (notificationId) => {
     return false;
   }
 };
+
+export const getUsersBasicInfo = async (userIds) => {
+  try {
+    const response = await makeAuthenticatedRequest("/api/users/basic-info", {
+      method: "POST",
+      body: JSON.stringify({ userIds }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch users' basic info.");
+    }
+
+    return await response.json();
+  } catch (err) {
+    if (process.env.REACT_APP_ENV === "development")
+      console.error("Error fetching users' basic info:", err.message);
+    throw err;
+  }
+};

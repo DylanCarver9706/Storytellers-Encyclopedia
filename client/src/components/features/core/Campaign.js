@@ -47,6 +47,20 @@ const Campaign = () => {
     <div className="campaign-container">
       <div className="campaign-header">
         <h1 className="campaign-title">{campaign.title}</h1>
+        <div className="campaign-players">
+          <h3>Players</h3>
+          {players.length > 0 ? (
+            <ul className="players-list">
+              {players.map((player) => (
+                <li key={player._id} className="player-item">
+                  {player.name}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No players added yet</p>
+          )}
+        </div>
       </div>
       <Timelines campaignId={campaignId} />
     </div>
