@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   getCampaignsByOwnerId,
+  getCampaignsByPlayerId,
   createCampaign,
   updateCampaign,
   deleteCampaign,
@@ -10,7 +11,8 @@ import { useUser } from "../../../contexts/UserContext";
 import "../../../styles/components/core/Campaigns.css";
 
 const Campaigns = () => {
-  const [campaigns, setCampaigns] = useState([]);
+  const [ownedCampaigns, setOwnedCampaigns] = useState([]);
+  const [playerCampaigns, setPlayerCampaigns] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [formData, setFormData] = useState({
@@ -22,8 +24,12 @@ const Campaigns = () => {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const data = await getCampaignsByOwnerId(user.mongoUserId);
-        setCampaigns(data);
+        const ownedCampaigns = await getCampaignsByOwnerId(user.mongoUserId);
+        console.log("Owned campaigns:", ownedCampaigns);
+        setOwnedCampaigns(ownedCampaigns);
+        const playerCampaigns = await getCampaignsByPlayerId(user.mongoUserId);
+        console.log("Player campaigns:", playerCampaigns);
+        setPlayerCampaigns(playerCampaigns);
       } catch (error) {
         console.error("Error fetching campaigns:", error);
       }
@@ -50,8 +56,8 @@ const Campaigns = () => {
           editingCampaign._id,
           formData
         );
-        setCampaigns(
-          campaigns.map((campaign) =>
+        setOwnedCampaigns(
+          ownedCampaigns.map((campaign) =>
             campaign._id === updatedCampaign._id ? updatedCampaign : campaign
           )
         );
@@ -60,7 +66,7 @@ const Campaigns = () => {
           ownerId: user.mongoUserId,
           ...formData,
         });
-        setCampaigns([...campaigns, newCampaign]);
+        setOwnedCampaigns([...ownedCampaigns, newCampaign]);
       }
       handleCloseModal();
     } catch (error) {
@@ -82,7 +88,9 @@ const Campaigns = () => {
     if (window.confirm("Are you sure you want to delete this campaign?")) {
       try {
         await deleteCampaign(id);
-        setCampaigns(campaigns.filter((campaign) => campaign._id !== id));
+        setOwnedCampaigns(
+          ownedCampaigns.filter((campaign) => campaign._id !== id)
+        );
       } catch (error) {
         console.error("Error deleting campaign:", error);
       }
@@ -113,32 +121,54 @@ const Campaigns = () => {
         </button>
       </div>
 
-      <div className="campaigns-grid">
-        {campaigns.map((campaign) => (
-          <div
-            key={campaign._id}
-            className="campaign-card"
-            onClick={() => handleCampaignClick(campaign._id)}
-            style={{ cursor: "pointer" }}
-          >
-            <h2 className="campaign-title">{campaign.title}</h2>
-            <div className="campaign-actions">
-              <button
-                className="action-btn edit-btn"
-                onClick={(e) => handleEdit(e, campaign)}
+      {ownedCampaigns.length > 0 && (
+        <div className="campaigns-section">
+          <h2 className="section-title">My Campaigns</h2>
+          <div className="campaigns-grid">
+            {ownedCampaigns.map((campaign) => (
+              <div
+                key={campaign._id}
+                className="campaign-card"
+                onClick={() => handleCampaignClick(campaign._id)}
               >
-                Edit
-              </button>
-              <button
-                className="action-btn delete-btn"
-                onClick={(e) => handleDelete(e, campaign._id)}
-              >
-                Delete
-              </button>
-            </div>
+                <h2 className="campaign-title">{campaign.title}</h2>
+                <div className="campaign-actions">
+                  <button
+                    className="action-btn edit-btn"
+                    onClick={(e) => handleEdit(e, campaign)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="action-btn delete-btn"
+                    onClick={(e) => handleDelete(e, campaign._id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {playerCampaigns.length > 0 && (
+        <div className="campaigns-section">
+          <h2 className="section-title">Joined Campaigns</h2>
+          <div className="campaigns-grid">
+            {playerCampaigns.map((campaign) => (
+              <div
+                key={campaign._id}
+                className="campaign-card"
+                onClick={() => handleCampaignClick(campaign._id)}
+              >
+                <h2 className="campaign-title">{campaign.title}</h2>
+                <p className="campaign-owner">Owner: {campaign.ownerName}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {isModalOpen && (
         <div className="modal">

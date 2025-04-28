@@ -44,6 +44,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
 }
 
 .campaign-card:hover {
