@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./config/firebaseConfig";
 import { usePageTracking } from "./services/firebaseService";
-import {
-  getMongoUserDataByFirebaseId
-} from "./services/userService";
+import { getMongoUserDataByFirebaseId } from "./services/userService";
 import {
   getLatestPrivacyPolicy,
   getLatestTermsOfService,
@@ -36,6 +34,7 @@ import Contact from "./components/features/about/Contact";
 import Spinner from "./components/common/Spinner";
 import Campaigns from "./components/features/core/Campaigns";
 import Campaign from "./components/features/core/Campaign";
+import Timeline from "./components/features/core/Timeline";
 
 // Deprecated components
 // import PlaidIdentityVerification from "./components/PlaidIdentityVerification"; Deprecated
@@ -282,6 +281,14 @@ function App() {
             }
           />
           <Route
+            path="/timeline/:id"
+            element={
+              <PrivateRoute authorized={loggedIn}>
+                <Timeline />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/email-verification"
             element={
               <PrivateRoute
@@ -316,7 +323,7 @@ function App() {
             element={
               <PrivateRoute
                 authorized={loggedIn && accountSuspended}
-                redirectTo="/wagers"
+                redirectTo="/campaigns"
               >
                 <SuspendedUser />
               </PrivateRoute>
