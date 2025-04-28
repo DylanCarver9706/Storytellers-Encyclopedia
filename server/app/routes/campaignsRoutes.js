@@ -9,9 +9,24 @@ router.get(
   verifyFirebaseToken(),
   campaignController.getCampaignsByOwnerId
 );
+router.get(
+  "/player/:playerId",
+  verifyFirebaseToken(),
+  campaignController.getCampaignsByPlayerId
+);
 router.get("/:id", verifyFirebaseToken(), campaignController.getCampaignById);
 router.post("/", verifyFirebaseToken(), campaignController.createCampaign);
 router.put("/:id", verifyFirebaseToken(), campaignController.updateCampaign);
 router.delete("/:id", verifyFirebaseToken(), campaignController.deleteCampaign);
+router.post(
+  "/:campaignId/invite",
+  verifyFirebaseToken(),
+  campaignController.sendCampaignInvite
+);
+router.post(
+  "/:campaignId/accept-invite",
+  verifyFirebaseToken(),
+  campaignController.acceptCampaignInvite
+);
 
 module.exports = router;

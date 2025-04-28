@@ -60,6 +60,49 @@ const deleteCampaign = async (req, res, logError) => {
   }
 };
 
+const sendCampaignInvite = async (req, res, logError) => {
+  try {
+    await campaignService.sendCampaignInvite(
+      req.params.campaignId,
+      req.body.email
+    );
+    res.status(200).json({ message: "Campaign invite sent successfully" });
+  } catch (error) {
+    logError(error);
+  }
+};
+
+const acceptCampaignInvite = async (req, res, logError) => {
+  try {
+    const { campaignId } = req.params;
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const updatedCampaign = await campaignService.acceptCampaignInvite(
+      campaignId,
+      userId
+    );
+    res.status(200).json(updatedCampaign);
+  } catch (error) {
+    logError(error);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const getCampaignsByPlayerId = async (req, res, logError) => {
+  try {
+    const campaigns = await campaignService.getCampaignsByPlayerId(
+      req.params.playerId
+    );
+    res.status(200).json(campaigns);
+  } catch (error) {
+    logError(error);
+  }
+};
+
 module.exports = {
   getAllCampaigns,
   getCampaignsByOwnerId,
@@ -67,4 +110,7 @@ module.exports = {
   createCampaign,
   updateCampaign,
   deleteCampaign,
+  sendCampaignInvite,
+  acceptCampaignInvite,
+  getCampaignsByPlayerId,
 };
