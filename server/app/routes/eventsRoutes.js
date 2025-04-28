@@ -4,6 +4,11 @@ const eventController = require("../controllers/eventsController");
 const { verifyFirebaseToken } = require("../middlewares/firebaseAdmin");
 
 router.get("/", verifyFirebaseToken(), eventController.getAllEvents);
+router.get(
+  "/timeline/:timelineId",
+  verifyFirebaseToken(),
+  eventController.getEventsByTimelineId
+);
 router.get("/:id", verifyFirebaseToken(), eventController.getEventById);
 router.post("/", verifyFirebaseToken(), eventController.createEvent);
 router.put("/:id", verifyFirebaseToken(), eventController.updateEvent);

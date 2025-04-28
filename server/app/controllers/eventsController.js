@@ -40,6 +40,15 @@ const updateEvent = async (req, res, logError) => {
   }
 };
 
+const getEventsByTimelineId = async (req, res, logError) => {
+  try {
+    const events = await eventService.getEventsByTimelineId(req.params.timelineId);
+    res.status(200).json(events);
+  } catch (error) {
+    logError(error);
+  }
+};
+
 const deleteEvent = async (req, res, logError) => {
   try {
     await eventService.deleteEvent(req.params.id);
@@ -52,6 +61,7 @@ const deleteEvent = async (req, res, logError) => {
 module.exports = {
   getAllEvents,
   getEventById,
+  getEventsByTimelineId,
   createEvent,
   updateEvent,
   deleteEvent,

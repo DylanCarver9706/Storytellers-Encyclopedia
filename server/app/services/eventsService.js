@@ -16,15 +16,35 @@ const getEventById = async (id) => {
 };
 
 const createEvent = async (eventData) => {
-  return await createMongoDocument(collections.eventsCollection, eventData);
+  const { timelineId, ...rest } = eventData;
+  const mongoData = {
+    ...rest,
+    timelineId: ObjectId.createFromHexString(timelineId),
+  };
+  const mongoDocument = await createMongoDocument(
+    collections.eventsCollection,
+    mongoData,
+    true
+  );
+  if (!mongoDocument) {
+    throw new Error("Failed to create event");
+  }
+  return mongoDocument;
 };
 
 const updateEvent = async (id, eventData) => {
   return await updateMongoDocument(
     collections.eventsCollection,
     id,
-    { $set: eventData }
+    { $set: eventData },
+    true
   );
+};
+
+const getEventsByTimelineId = async (timelineId) => {
+  return await collections.eventsCollection.find({
+    timelineId: ObjectId.createFromHexString(timelineId),
+  }).toArray();
 };
 
 const deleteEvent = async (id) => {
@@ -39,4 +59,5 @@ module.exports = {
   createEvent,
   updateEvent,
   deleteEvent,
+  getEventsByTimelineId,
 };
