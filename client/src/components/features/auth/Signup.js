@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -17,7 +17,11 @@ import Tooltip from "../../common/ToolTip";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../styles/components/auth/Signup.css";
 import Spinner from "../../common/Spinner";
-import { getLatestPrivacyPolicy, getLatestTermsOfService } from "../../../services/agreementService";
+import {
+  getLatestPrivacyPolicy,
+  getLatestTermsOfService,
+} from "../../../services/agreementService";
+import { acceptCampaignInvite } from "../../../services/campaignsService";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -33,6 +37,13 @@ const Signup = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedReferralCode = localStorage.getItem("referralCode");
+    if (storedReferralCode) {
+      setReferralCode(storedReferralCode);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,7 +105,6 @@ const Signup = () => {
       // Remove referral code from local storage
       localStorage.removeItem("referralCode");
 
-      // if (providerId === "password") {
       if (!firebaseUser.emailVerified) {
         // Send Email Verification
         await sendEmailVerification(firebaseUser);
@@ -131,7 +141,6 @@ const Signup = () => {
       if (!mongoUserFound) {
         // New user: Create in MongoDB
         try {
-
           // Get the latest privacy policy and terms of service
           let privacyPolicy = await getLatestPrivacyPolicy();
           let termsOfService = await getLatestTermsOfService();
@@ -174,6 +183,11 @@ const Signup = () => {
           alert("Failed to create a new user. Please try again.");
         }
       }
+
+      if (referralCode !== "") {
+        await acceptCampaignInvite(referralCode, mongoUserFound._id);
+      }
+
       navigate("/campaigns");
     } catch (error) {
       console.error("Error during Google authentication:", error.message);
