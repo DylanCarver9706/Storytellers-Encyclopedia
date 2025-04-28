@@ -51,14 +51,14 @@ const Navbar = () => {
       <div className="desktop-nav">
         <h2 className="brand">
           <Link to="/" className="brand-link">
-            RLBets
+            Storyteller's Encyclopedia
           </Link>
         </h2>
 
         {user ? (
           <div className="nav-center">
-            <Link to="/wagers" className="nav-link">
-              Wagers
+            <Link to="/campaigns" className="nav-link">
+              Campaigns
             </Link>
             {user?.userType === "admin" && (
               <div
@@ -130,7 +130,7 @@ const Navbar = () => {
             className="mobile-brand-nav-link"
             onClick={handleNavLinkClick}
           >
-            RLBets
+            Storyteller's Encyclopedia
           </Link>
         </h2>
         {user ? (
@@ -154,11 +154,11 @@ const Navbar = () => {
                   </span>
                 </div>
                 <Link
-                  to="/wagers"
+                  to="/campaigns"
                   className="mobile-nav-link"
                   onClick={handleNavLinkClick}
                 >
-                  Wagers
+                  Campaigns
                 </Link>
               </div>
               <div className="mobile-column-right">
