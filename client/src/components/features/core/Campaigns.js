@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  getAllCampaigns,
+  getCampaignsByOwnerId,
   createCampaign,
   updateCampaign,
   deleteCampaign,
 } from "../../../services/campaignsService";
+import { useUser } from "../../../contexts/UserContext";
 import "../../../styles/components/core/Campaigns.css";
 
 const Campaigns = () => {
@@ -14,19 +16,23 @@ const Campaigns = () => {
   const [formData, setFormData] = useState({
     title: "",
   });
+  const { user } = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCampaigns();
-  }, []);
+    const fetchCampaigns = async () => {
+      try {
+        const data = await getCampaignsByOwnerId(user.mongoUserId);
+        setCampaigns(data);
+      } catch (error) {
+        console.error("Error fetching campaigns:", error);
+      }
+    };
 
-  const fetchCampaigns = async () => {
-    try {
-      const data = await getAllCampaigns();
-      setCampaigns(data);
-    } catch (error) {
-      console.error("Error fetching campaigns:", error);
+    if (user?.mongoUserId) {
+      fetchCampaigns();
     }
-  };
+  }, [user?.mongoUserId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,18 +46,30 @@ const Campaigns = () => {
     e.preventDefault();
     try {
       if (editingCampaign) {
-        await updateCampaign(editingCampaign._id, formData);
+        const updatedCampaign = await updateCampaign(
+          editingCampaign._id,
+          formData
+        );
+        setCampaigns(
+          campaigns.map((campaign) =>
+            campaign._id === updatedCampaign._id ? updatedCampaign : campaign
+          )
+        );
       } else {
-        await createCampaign(formData);
+        const newCampaign = await createCampaign({
+          ownerId: user.mongoUserId,
+          ...formData,
+        });
+        setCampaigns([...campaigns, newCampaign]);
       }
-      fetchCampaigns();
       handleCloseModal();
     } catch (error) {
       console.error("Error saving campaign:", error);
     }
   };
 
-  const handleEdit = (campaign) => {
+  const handleEdit = (e, campaign) => {
+    e.stopPropagation();
     setEditingCampaign(campaign);
     setFormData({
       title: campaign.title,
@@ -59,11 +77,12 @@ const Campaigns = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
     if (window.confirm("Are you sure you want to delete this campaign?")) {
       try {
         await deleteCampaign(id);
-        fetchCampaigns();
+        setCampaigns(campaigns.filter((campaign) => campaign._id !== id));
       } catch (error) {
         console.error("Error deleting campaign:", error);
       }
@@ -76,6 +95,10 @@ const Campaigns = () => {
     setFormData({
       title: "",
     });
+  };
+
+  const handleCampaignClick = (campaignId) => {
+    navigate(`/campaign/${campaignId}`);
   };
 
   return (
@@ -92,18 +115,23 @@ const Campaigns = () => {
 
       <div className="campaigns-grid">
         {campaigns.map((campaign) => (
-          <div key={campaign._id} className="campaign-card">
+          <div
+            key={campaign._id}
+            className="campaign-card"
+            onClick={() => handleCampaignClick(campaign._id)}
+            style={{ cursor: "pointer" }}
+          >
             <h2 className="campaign-title">{campaign.title}</h2>
             <div className="campaign-actions">
               <button
                 className="action-btn edit-btn"
-                onClick={() => handleEdit(campaign)}
+                onClick={(e) => handleEdit(e, campaign)}
               >
                 Edit
               </button>
               <button
                 className="action-btn delete-btn"
-                onClick={() => handleDelete(campaign._id)}
+                onClick={(e) => handleDelete(e, campaign._id)}
               >
                 Delete
               </button>

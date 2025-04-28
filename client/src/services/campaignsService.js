@@ -18,6 +18,27 @@ export const getAllCampaigns = async () => {
   }
 };
 
+export const getCampaignsByOwnerId = async (ownerId) => {
+  try {
+    const response = await makeAuthenticatedRequest(
+      `/api/campaigns/owner/${ownerId}`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user campaigns.");
+    }
+
+    return await response.json();
+  } catch (err) {
+    if (process.env.REACT_APP_ENV === "development")
+      console.error("Error fetching user campaigns:", err.message);
+    throw err;
+  }
+};
+
 export const getCampaignById = async (id) => {
   try {
     const response = await makeAuthenticatedRequest(`/api/campaigns/${id}`, {
