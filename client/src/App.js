@@ -35,6 +35,7 @@ import About from "./components/features/about/About";
 import Contact from "./components/features/about/Contact";
 import Spinner from "./components/common/Spinner";
 import Campaigns from "./components/features/core/Campaigns";
+import Campaign from "./components/features/core/Campaign";
 
 // Deprecated components
 // import PlaidIdentityVerification from "./components/PlaidIdentityVerification"; Deprecated
@@ -265,6 +266,14 @@ function App() {
             }
           />
           <Route
+            path="/campaign/:id"
+            element={
+              <PrivateRoute authorized={loggedIn}>
+                <Campaign />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/campaigns"
             element={
               <PrivateRoute authorized={loggedIn}>
@@ -277,7 +286,7 @@ function App() {
             element={
               <PrivateRoute
                 authorized={loggedIn && !emailVerified}
-                redirectTo="/wagers"
+                redirectTo="/campaigns"
               >
                 <EmailVerification />
               </PrivateRoute>
@@ -288,7 +297,7 @@ function App() {
             element={
               <PrivateRoute
                 authorized={loggedIn && (requireTos || requirePp)}
-                redirectTo="/wagers"
+                redirectTo="/campaigns"
               >
                 <Agreements />
               </PrivateRoute>
