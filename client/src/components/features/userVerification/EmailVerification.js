@@ -3,6 +3,7 @@ import { auth } from "../../../config/firebaseConfig";
 import { useUser } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { updateUser } from "../../../services/userService";
+import { acceptCampaignInvite } from "../../../services/campaignsService";
 import "../../../styles/components/userVerification/EmailVerification.css";
 
 const EmailVerification = () => {
@@ -17,7 +18,7 @@ const EmailVerification = () => {
           auth.currentUser,
           "User:",
           user
-      );
+        );
 
       // Checking if the user is authenticated and has had their email verified
       if (auth.currentUser && user?.emailVerificationStatus !== "verified") {
@@ -37,8 +38,12 @@ const EmailVerification = () => {
           // Update the global user state
           setUser({ ...user, emailVerificationStatus: "verified" });
 
-          // Redirect the user to the Identity Verification page
-          navigate("/identity-verification");
+          if (user.referralCode !== "") {
+            await acceptCampaignInvite(user.referralCode, user.mongoUserId);
+          }
+
+          // Redirect the user to the campaigns page
+          navigate("/campaigns");
         }
       }
     };
