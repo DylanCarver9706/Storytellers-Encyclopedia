@@ -63,7 +63,7 @@ const BugForm = () => {
 
       if (response.status === 200) {
         alert("Bug report submitted successfully!");
-        navigate("/wagers");
+        navigate("/campaigns");
       }
     } catch (error) {
       alert("Failed to submit bug report. Please try again.");
@@ -74,8 +74,10 @@ const BugForm = () => {
     <div className="feedback-container">
       <h2 className="feedback-header">Report a Bug</h2>
       {error && <p className="error-message">{error}</p>}
-      <h3 className="feedback-subheader">All fields marked with a "*" are required.</h3>
-      
+      <h3 className="feedback-subheader">
+        All fields marked with a "*" are required.
+      </h3>
+
       <form className="feedback-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Summary*</label>
@@ -87,10 +89,7 @@ const BugForm = () => {
         </div>
         <div className="form-group">
           <label>Steps to Reproduce*</label>
-          <textarea
-            value={steps}
-            onChange={(e) => setSteps(e.target.value)}
-          />
+          <textarea value={steps} onChange={(e) => setSteps(e.target.value)} />
         </div>
         <div className="form-group">
           <label>Expected Behavior*</label>
@@ -132,10 +131,7 @@ const BugForm = () => {
         </div>
         <div className="form-group">
           <label>Browser*</label>
-          <select
-            value={browser}
-            onChange={(e) => setBrowser(e.target.value)}
-          >
+          <select value={browser} onChange={(e) => setBrowser(e.target.value)}>
             <option value="">Select An Option</option>
             <option value="Chrome">Chrome</option>
             <option value="Safari">Safari</option>
@@ -158,7 +154,9 @@ const BugForm = () => {
             onChange={(e) => setAdditionalContext(e.target.value)}
           />
         </div>
-        <button className="submit-button" type="submit">Submit Bug</button>
+        <button className="submit-button" type="submit">
+          Submit Bug
+        </button>
       </form>
     </div>
   );

@@ -55,7 +55,7 @@ const FeatureForm = () => {
         setPriority("");
         setRelatedFeatures("");
         setAdditionalDetails("");
-        navigate("/wagers");
+        navigate("/campaigns");
       }
     } catch (error) {
       alert("Failed to submit feature request. Please try again.");
@@ -66,8 +66,10 @@ const FeatureForm = () => {
     <div className="feedback-container">
       <h2 className="feedback-header">Suggest a Feature</h2>
       {error && <p className="error-message">{error}</p>}
-      <h3 className="feedback-subheader">All fields marked with a "*" are required.</h3>
-      
+      <h3 className="feedback-subheader">
+        All fields marked with a "*" are required.
+      </h3>
+
       <form className="feedback-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Summary*:</label>
@@ -125,7 +127,9 @@ const FeatureForm = () => {
             onChange={(e) => setAdditionalDetails(e.target.value)}
           />
         </div>
-        <button className="submit-button" type="submit">Submit Feature</button>
+        <button className="submit-button" type="submit">
+          Submit Feature
+        </button>
       </form>
     </div>
   );

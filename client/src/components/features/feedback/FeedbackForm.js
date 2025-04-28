@@ -44,7 +44,7 @@ const FeedbackForm = () => {
         alert("Feedback submitted successfully!");
         setSummary("");
         setDescription("");
-        navigate("/wagers");
+        navigate("/campaigns");
       }
     } catch (error) {
       alert("Failed to submit feedback. Please try again.");
@@ -55,7 +55,7 @@ const FeedbackForm = () => {
     <div className="feedback-container">
       <h2 className="feedback-header">Give Feedback</h2>
       {error && <p className="error-message">{error}</p>}
-      
+
       <form className="feedback-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Summary:</label>
@@ -74,7 +74,9 @@ const FeedbackForm = () => {
           />
         </div>
 
-        <button className="submit-button" type="submit">Submit Feedback</button>
+        <button className="submit-button" type="submit">
+          Submit Feedback
+        </button>
       </form>
     </div>
   );
