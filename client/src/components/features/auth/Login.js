@@ -14,7 +14,10 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { logEvent } from "firebase/analytics";
 import "../../../styles/components/auth/Login.css";
-import { getLatestPrivacyPolicy, getLatestTermsOfService } from "../../../services/agreementService.js";
+import {
+  getLatestPrivacyPolicy,
+  getLatestTermsOfService,
+} from "../../../services/agreementService.js";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -31,7 +34,7 @@ const Login = () => {
     try {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/wagers");
+      navigate("/campaigns");
     } catch (error) {
       console.error("Error during authentication:", error.message);
       setError(error.message);
@@ -59,7 +62,6 @@ const Login = () => {
       if (!mongoUserFound) {
         // New user: Create in MongoDB
         try {
-
           // Get the latest privacy policy and terms of service
           let privacyPolicy = await getLatestPrivacyPolicy();
           let termsOfService = await getLatestTermsOfService();
@@ -105,7 +107,7 @@ const Login = () => {
         }
       } else {
         // window.location.reload();
-        navigate("/wagers");
+        navigate("/campaigns");
       }
     } catch (error) {
       console.error("Error during Google authentication:", error.message);
