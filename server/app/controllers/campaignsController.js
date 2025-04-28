@@ -9,6 +9,17 @@ const getAllCampaigns = async (req, res, logError) => {
   }
 };
 
+const getCampaignsByOwnerId = async (req, res, logError) => {
+  try {
+    const campaigns = await campaignService.getCampaignsByOwnerId(
+      req.params.ownerId
+    );
+    res.status(200).json(campaigns);
+  } catch (error) {
+    logError(error);
+  }
+};
+
 const getCampaignById = async (req, res, logError) => {
   try {
     const campaign = await campaignService.getCampaignById(req.params.id);
@@ -51,6 +62,7 @@ const deleteCampaign = async (req, res, logError) => {
 
 module.exports = {
   getAllCampaigns,
+  getCampaignsByOwnerId,
   getCampaignById,
   createCampaign,
   updateCampaign,

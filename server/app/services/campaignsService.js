@@ -9,6 +9,14 @@ const getAllCampaigns = async () => {
   return await collections.campaignsCollection.find().toArray();
 };
 
+const getCampaignsByOwnerId = async (ownerId) => {
+  return await collections.campaignsCollection
+    .find({
+      ownerId: ObjectId.createFromHexString(ownerId),
+    })
+    .toArray();
+};
+
 const getCampaignById = async (id) => {
   return await collections.campaignsCollection.findOne({
     _id: ObjectId.createFromHexString(id),
@@ -16,18 +24,18 @@ const getCampaignById = async (id) => {
 };
 
 const createCampaign = async (campaignData) => {
-  return await createMongoDocument(
-    collections.campaignsCollection,
-    campaignData
-  );
+  const { ownerId, ...rest } = campaignData;
+  const mongoDocument = {
+    ownerId: ObjectId.createFromHexString(ownerId),
+    ...rest,
+  };
+  return await createMongoDocument(collections.campaignsCollection, mongoDocument, true);
 };
 
 const updateCampaign = async (id, campaignData) => {
-  return await updateMongoDocument(
-    collections.campaignsCollection,
-    id,
-    { $set: campaignData }
-  );
+  return await updateMongoDocument(collections.campaignsCollection, id, {
+    $set: campaignData,
+  });
 };
 
 const deleteCampaign = async (id) => {
@@ -38,6 +46,7 @@ const deleteCampaign = async (id) => {
 
 module.exports = {
   getAllCampaigns,
+  getCampaignsByOwnerId,
   getCampaignById,
   createCampaign,
   updateCampaign,
