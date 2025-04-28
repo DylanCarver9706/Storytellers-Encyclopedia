@@ -92,6 +92,19 @@ const identityVerificationComplete = async (req, res, logError) => {
   }
 };
 
+const getUsersBasicInfo = async (req, res, logError) => {
+  try {
+    const { userIds } = req.body;
+    if (!Array.isArray(userIds)) {
+      return res.status(400).json({ error: "userIds must be an array" });
+    }
+    const users = await userService.getUsersBasicInfo(userIds);
+    res.status(200).json(users);
+  } catch (error) {
+    logError(error);
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -102,4 +115,5 @@ module.exports = {
   deleteUser,
   adminEmailUsers,
   identityVerificationComplete,
+  getUsersBasicInfo,
 };

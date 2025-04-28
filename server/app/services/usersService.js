@@ -237,6 +237,14 @@ const sendIdentityVerificationResults = async (submissionData) => {
   });
 };
 
+const getUsersBasicInfo = async (userIds) => {
+  const objectIds = userIds.map((id) => ObjectId.createFromHexString(id));
+  return await collections.usersCollection
+    .find({ _id: { $in: objectIds } })
+    .project({ name: 1 })
+    .toArray();
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -247,4 +255,5 @@ module.exports = {
   deleteUser,
   adminEmailUsers,
   sendIdentityVerificationResults,
+  getUsersBasicInfo,
 };
