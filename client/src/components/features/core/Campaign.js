@@ -2,13 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getCampaignById } from "../../../services/campaignsService";
 import { getUsersBasicInfo } from "../../../services/userService";
+import { sendCampaignInvite } from "../../../services/campaignsService";
 import Timelines from "./Timelines";
+import Characters from "./Characters";
 import "../../../styles/components/core/Campaign.css";
 
 const Campaign = () => {
   const [campaign, setCampaign] = useState(null);
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteError, setInviteError] = useState("");
+  const [inviteSuccess, setInviteSuccess] = useState("");
   const { id: campaignId } = useParams();
 
   useEffect(() => {
@@ -35,6 +41,34 @@ const Campaign = () => {
     }
   }, [campaignId]);
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleInviteSubmit = async (e) => {
+    e.preventDefault();
+    setInviteError("");
+    setInviteSuccess("");
+
+    if (!validateEmail(inviteEmail)) {
+      setInviteError("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      await sendCampaignInvite(campaignId, inviteEmail);
+      setInviteSuccess("Invitation sent successfully!");
+      setInviteEmail("");
+      setTimeout(() => {
+        setIsInviteModalOpen(false);
+        setInviteSuccess("");
+      }, 2000);
+    } catch (error) {
+      setInviteError("Failed to send invitation. Please try again.");
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -48,7 +82,15 @@ const Campaign = () => {
       <div className="campaign-header">
         <h1 className="campaign-title">{campaign.title}</h1>
         <div className="campaign-players">
-          <h3>Players</h3>
+          <div className="players-header">
+            <h3>Players</h3>
+            <button
+              className="invite-btn"
+              onClick={() => setIsInviteModalOpen(true)}
+            >
+              Invite Player
+            </button>
+          </div>
           {players.length > 0 ? (
             <ul className="players-list">
               {players.map((player) => (
@@ -62,7 +104,66 @@ const Campaign = () => {
           )}
         </div>
       </div>
-      <Timelines campaignId={campaignId} />
+
+      <div className="campaign-content">
+        <Timelines campaignId={campaignId} />
+        <Characters campaignId={campaignId} />
+      </div>
+
+      {isInviteModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Invite Player</h2>
+              <button
+                className="close-btn"
+                onClick={() => {
+                  setIsInviteModalOpen(false);
+                  setInviteEmail("");
+                  setInviteError("");
+                  setInviteSuccess("");
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <form onSubmit={handleInviteSubmit}>
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  placeholder="Enter player's email"
+                  required
+                />
+                {inviteError && <p className="error-message">{inviteError}</p>}
+                {inviteSuccess && (
+                  <p className="success-message">{inviteSuccess}</p>
+                )}
+              </div>
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => {
+                    setIsInviteModalOpen(false);
+                    setInviteEmail("");
+                    setInviteError("");
+                    setInviteSuccess("");
+                  }}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="save-btn">
+                  Send Invite
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
