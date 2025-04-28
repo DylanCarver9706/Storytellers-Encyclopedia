@@ -19,6 +19,17 @@ const getTimelineById = async (req, res, logError) => {
   }
 };
 
+const getTimelinesByCampaignId = async (req, res, logError) => {
+  try {
+    const timelines = await timelineService.getTimelinesByCampaignId(
+      req.params.campaignId
+    );
+    res.status(200).json(timelines);
+  } catch (error) {
+    logError(error);
+  }
+};
+
 const createTimeline = async (req, res, logError) => {
   try {
     const newTimeline = await timelineService.createTimeline(req.body);
@@ -52,6 +63,7 @@ const deleteTimeline = async (req, res, logError) => {
 module.exports = {
   getAllTimelines,
   getTimelineById,
+  getTimelinesByCampaignId,
   createTimeline,
   updateTimeline,
   deleteTimeline,

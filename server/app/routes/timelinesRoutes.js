@@ -4,6 +4,11 @@ const timelineController = require("../controllers/timelinesController");
 const { verifyFirebaseToken } = require("../middlewares/firebaseAdmin");
 
 router.get("/", verifyFirebaseToken(), timelineController.getAllTimelines);
+router.get(
+  "/campaign/:campaignId",
+  verifyFirebaseToken(),
+  timelineController.getTimelinesByCampaignId
+);
 router.get("/:id", verifyFirebaseToken(), timelineController.getTimelineById);
 router.post("/", verifyFirebaseToken(), timelineController.createTimeline);
 router.put("/:id", verifyFirebaseToken(), timelineController.updateTimeline);

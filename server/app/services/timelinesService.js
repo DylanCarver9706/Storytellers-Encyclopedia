@@ -15,19 +15,41 @@ const getTimelineById = async (id) => {
   });
 };
 
+const getTimelinesByCampaignId = async (campaignId) => {
+  return await collections.timelinesCollection
+    .find({
+      campaignId: ObjectId.createFromHexString(campaignId),
+    })
+    .toArray();
+};
+
 const createTimeline = async (timelineData) => {
-  return await createMongoDocument(
+  const { campaignId, ...rest } = timelineData;
+  const mongoData = {
+    ...rest,
+    campaignId: ObjectId.createFromHexString(campaignId),
+  };
+  const mongoDocument = await createMongoDocument(
     collections.timelinesCollection,
-    timelineData
+    mongoData,
+    true
   );
+  if (!mongoDocument) {
+    throw new Error("Failed to create timeline");
+  }
+  return mongoDocument;
 };
 
 const updateTimeline = async (id, timelineData) => {
-  return await updateMongoDocument(
+  const updatedDocument = await updateMongoDocument(
     collections.timelinesCollection,
     id,
-    { $set: timelineData }
+    {
+      $set: timelineData,
+    },
+    true
   );
+  return updatedDocument;
 };
 
 const deleteTimeline = async (id) => {
@@ -39,6 +61,7 @@ const deleteTimeline = async (id) => {
 module.exports = {
   getAllTimelines,
   getTimelineById,
+  getTimelinesByCampaignId,
   createTimeline,
   updateTimeline,
   deleteTimeline,
