@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   updateUser,
   softDeleteUserStatusUpdate,
-  generateReferralCode,
+  // generateReferralCode,
 } from "../../../services/userService";
 import {
   deleteUser,
@@ -15,14 +15,14 @@ import {
 import { useUser } from "../../../contexts/UserContext";
 import { auth } from "../../../config/firebaseConfig";
 import "../../../styles/components/core/Profile.css";
-import Tooltip from "../../common/ToolTip";
+// import Tooltip from "../../common/ToolTip";
 
 const Profile = () => {
   const { user, setUser } = useUser();
   const [name, setName] = useState(user?.name);
   const [email, setEmail] = useState(user?.email);
   const [editing, setEditing] = useState(false);
-  const [copySuccess, setCopySuccess] = useState(false);
+  // const [copySuccess, setCopySuccess] = useState(false);
   const navigate = useNavigate();
 
   const updateUserMeta = async () => {
@@ -129,17 +129,15 @@ const Profile = () => {
 
   const handleResetPassword = async () => {
     try {
-      if (
-        user.emailVerificationStatus === "verified" &&
-        user.smsVerificationStatus === "verified" &&
-        user.idvStatus === "verified"
-      ) {
+      if (user.emailVerificationStatus === "verified") {
         await sendPasswordResetEmail(auth, user.email);
         await signOut(auth); // Firebase sign-out
         navigate("/login");
         alert("Password reset email sent successfully.");
       } else {
-        alert("Please verify your email, phone number, and identity before resetting your password.");
+        alert(
+          "Please verify your email, phone number, and identity before resetting your password."
+        );
       }
     } catch (error) {
       console.error("Error sending password reset email:", error.message);
@@ -147,29 +145,28 @@ const Profile = () => {
     }
   };
 
-  const handleCopyReferralLink = async () => {
-    try {
-      await navigator.clipboard.writeText(
-        await generateReferralCode(user.mongoUserId)
-      );
-      setCopySuccess("Copied!");
-      setTimeout(() => setCopySuccess(""), 2000); // Reset the success message after 2 seconds
-    } catch (error) {
-      setCopySuccess("Failed to copy!");
-      console.error("Failed to copy text:", error);
-    }
-  };
+  // TODO: Add referral section back in
+  // const handleCopyReferralLink = async () => {
+  //   try {
+  //     await navigator.clipboard.writeText(
+  //       await generateReferralCode(user.mongoUserId)
+  //     );
+  //     setCopySuccess("Copied!");
+  //     setTimeout(() => setCopySuccess(""), 2000); // Reset the success message after 2 seconds
+  //   } catch (error) {
+  //     setCopySuccess("Failed to copy!");
+  //     console.error("Failed to copy text:", error);
+  //   }
+  // };
 
   const handleEditProfileClick = async () => {
     try {
-      if (
-        user.emailVerificationStatus === "verified" &&
-        user.smsVerificationStatus === "verified" &&
-        user.idvStatus === "verified"
-      ) {
+      if (user.emailVerificationStatus === "verified") {
         setEditing(true);
       } else {
-        alert("Please verify your email, phone number, and identity before editing your profile.");
+        alert(
+          "Please verify your email, phone number, and identity before editing your profile."
+        );
       }
     } catch (error) {
       console.error("Failed to edit profile:", error);
@@ -182,7 +179,8 @@ const Profile = () => {
       {user ? (
         <div className="profile-grid">
           <div className="profile-section">
-            <div className="referral-section">
+            {/* TODO: Add referral section back in */}
+            {/* <div className="referral-section">
               <div className="referral-text">
                 Refer a friend and receive 50 Credits!{" "}
                 {
@@ -199,7 +197,7 @@ const Profile = () => {
               >
                 {copySuccess || "Copy Referral Link"}
               </button>
-            </div>
+            </div> */}
             <div className="credits-info">
               <div className="info-row">
                 <span className="info-label">Spendable Credits:</span>
