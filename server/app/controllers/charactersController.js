@@ -20,6 +20,17 @@ const getCharacterById = async (req, res, logError) => {
   }
 };
 
+const getCharactersByCampaignId = async (req, res, logError) => {
+  try {
+    const characters = await characterService.getCharactersByCampaignId(
+      req.params.campaignId
+    );
+    res.status(200).json(characters);
+  } catch (error) {
+    logError(error);
+  }
+};
+
 const createCharacter = async (req, res, logError) => {
   try {
     const newCharacter = await characterService.createCharacter(req.body);
@@ -53,6 +64,7 @@ const deleteCharacter = async (req, res, logError) => {
 module.exports = {
   getAllCharacters,
   getCharacterById,
+  getCharactersByCampaignId,
   createCharacter,
   updateCharacter,
   deleteCharacter,

@@ -15,19 +15,34 @@ const getCharacterById = async (id) => {
   });
 };
 
+const getCharactersByCampaignId = async (campaignId) => {
+  return await collections.charactersCollection
+    .find({ campaignId: ObjectId.createFromHexString(campaignId) })
+    .toArray();
+};
+
 const createCharacter = async (characterData) => {
+  const { campaignId, ...characterDataWithoutCampaignId } = characterData;
+  const mongoDocument = {
+    ...characterDataWithoutCampaignId,
+    campaignId: ObjectId.createFromHexString(campaignId),
+  };
   return await createMongoDocument(
     collections.charactersCollection,
-    characterData
+    mongoDocument,
+    true
   );
 };
 
 const updateCharacter = async (id, characterData) => {
-  return await updateMongoDocument(
-    collections.charactersCollection,
-    id,
-    { $set: characterData }
-  );
+  const { campaignId, ...characterDataWithoutCampaignId } = characterData;
+  const mongoDocument = {
+    ...characterDataWithoutCampaignId,
+    campaignId: ObjectId.createFromHexString(campaignId),
+  };
+  return await updateMongoDocument(collections.charactersCollection, id, {
+    $set: mongoDocument,
+  }, true);
 };
 
 const deleteCharacter = async (id) => {
@@ -39,6 +54,7 @@ const deleteCharacter = async (id) => {
 module.exports = {
   getAllCharacters,
   getCharacterById,
+  getCharactersByCampaignId,
   createCharacter,
   updateCharacter,
   deleteCharacter,
