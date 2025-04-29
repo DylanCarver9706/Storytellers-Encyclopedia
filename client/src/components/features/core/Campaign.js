@@ -107,6 +107,9 @@ const Campaign = () => {
 
       <div className="campaign-content">
         <Timelines campaignId={campaignId} />
+        <br />
+        <br />
+        <br />
         <Characters campaignId={campaignId} />
       </div>
 

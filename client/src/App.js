@@ -36,10 +36,6 @@ import Campaigns from "./components/features/core/Campaigns";
 import Campaign from "./components/features/core/Campaign";
 import Timeline from "./components/features/core/Timeline";
 
-// Deprecated components
-// import PlaidIdentityVerification from "./components/PlaidIdentityVerification"; Deprecated
-// import OpenAiIdentityVerification from "./components/OpenAiIdentityVerification";
-
 function App() {
   usePageTracking();
   const { user, setUser } = useUser();
