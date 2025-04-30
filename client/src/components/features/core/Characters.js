@@ -7,6 +7,8 @@ import {
   useEdgesState,
   Handle,
   Position,
+  useReactFlow,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import {
@@ -89,9 +91,11 @@ const nodeTypes = {
   character: CharacterNode,
 };
 
-const Characters = ({ campaignId }) => {
+// Inner component that uses ReactFlow hooks
+const CharactersFlow = ({ campaignId }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const { fitView } = useReactFlow();
   const [isNewCharacterModalOpen, setIsNewCharacterModalOpen] = useState(false);
   const [isEditCharacterModalOpen, setIsEditCharacterModalOpen] =
     useState(false);
@@ -256,6 +260,11 @@ const Characters = ({ campaignId }) => {
         };
         setEdges((eds) => [...eds, newEdge]);
       }
+
+      // Wait for the next render cycle to ensure the node is added
+      setTimeout(() => {
+        fitView({ duration: 800 });
+      }, 0);
 
       setIsNewCharacterModalOpen(false);
       setCreateFormData({ name: "", description: "", parentId: null });
@@ -597,6 +606,15 @@ const Characters = ({ campaignId }) => {
         )}
       </div>
     </>
+  );
+};
+
+// Outer component that provides the ReactFlow context
+const Characters = ({ campaignId }) => {
+  return (
+    <ReactFlowProvider>
+      <CharactersFlow campaignId={campaignId} />
+    </ReactFlowProvider>
   );
 };
 
