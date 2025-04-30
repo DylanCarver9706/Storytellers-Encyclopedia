@@ -21,6 +21,10 @@
                     "value": "true"
                 },
                 {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "https://storytellers-encyclopedia-client.vercel.app"
+                },
+                {
                     "key": "Access-Control-Allow-Methods",
                     "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
                 },
