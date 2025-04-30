@@ -99,6 +99,7 @@ const startServer = async () => {
     app.use("/api/server-utils", require("./app/routes/serverUtilsRoutes"));
     app.use("/api/agreements", require("./app/routes/agreementsRoutes"));
     app.use("/api/firebase", require("./app/routes/firebaseRoutes"));
+    app.use("/api/logs", require("./app/routes/logsRoutes"));
 
     app.use(errorLogger);
 
