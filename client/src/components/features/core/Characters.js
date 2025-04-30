@@ -99,7 +99,9 @@ const CharactersFlow = ({ campaignId }) => {
   const [isNewCharacterModalOpen, setIsNewCharacterModalOpen] = useState(false);
   const [isEditCharacterModalOpen, setIsEditCharacterModalOpen] =
     useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [editingCharacterId, setEditingCharacterId] = useState(null);
+  const [viewingCharacterId, setViewingCharacterId] = useState(null);
   const [createFormData, setCreateFormData] = useState({
     name: "",
     description: "",
@@ -348,6 +350,21 @@ const CharactersFlow = ({ campaignId }) => {
     }));
   };
 
+  const handleNodeClick = useCallback((event, node) => {
+    // Only handle click if it's not part of a drag operation
+    if (!event.dragging) {
+      setViewingCharacterId(node.id);
+      setIsViewModalOpen(true);
+    }
+  }, []);
+
+  const handleViewToEdit = useCallback((id) => {
+    setViewingCharacterId(null);
+    setIsViewModalOpen(false);
+    setEditingCharacterId(id);
+    setIsEditCharacterModalOpen(true);
+  }, []);
+
   return (
     <>
       <div className="characters-header">
@@ -374,12 +391,114 @@ const CharactersFlow = ({ campaignId }) => {
           edges={edges}
           onNodesChange={onNodesChangeHandler}
           onEdgesChange={onEdgesChange}
+          onNodeClick={handleNodeClick}
           nodeTypes={nodeTypes}
           fitView
         >
           <Background />
           <Controls />
         </ReactFlow>
+
+        {isViewModalOpen && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "white",
+                padding: "20px",
+                borderRadius: "8px",
+                width: "400px",
+              }}
+            >
+              <h2>Character Details</h2>
+              {viewingCharacterId && (
+                <>
+                  <div style={{ marginBottom: "15px" }}>
+                    <h3 style={{ marginBottom: "5px" }}>Name</h3>
+                    <p>
+                      {
+                        nodes.find((n) => n.id === viewingCharacterId)?.data
+                          .label
+                      }
+                    </p>
+                  </div>
+                  <div style={{ marginBottom: "15px" }}>
+                    <h3 style={{ marginBottom: "5px" }}>Description</h3>
+                    <p>
+                      {nodes.find((n) => n.id === viewingCharacterId)?.data
+                        .description || "No description"}
+                    </p>
+                  </div>
+                  <div style={{ marginBottom: "15px" }}>
+                    <h3 style={{ marginBottom: "5px" }}>Parent Character</h3>
+                    <p>
+                      {nodes.find((n) => n.id === viewingCharacterId)?.data
+                        .parentId
+                        ? nodes.find(
+                            (n) =>
+                              n.id ===
+                              nodes.find((n) => n.id === viewingCharacterId)
+                                ?.data.parentId
+                          )?.data.label
+                        : "None"}
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: "10px",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsViewModalOpen(false);
+                        setViewingCharacterId(null);
+                      }}
+                      style={{
+                        padding: "8px 16px",
+                        backgroundColor: "#f44336",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleViewToEdit(viewingCharacterId)}
+                      style={{
+                        padding: "8px 16px",
+                        backgroundColor: "#2196F3",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
 
         {isNewCharacterModalOpen && (
           <div
