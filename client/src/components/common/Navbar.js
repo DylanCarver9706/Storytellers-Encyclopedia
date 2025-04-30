@@ -109,17 +109,6 @@ const Navbar = () => {
             Login
           </button>
         )}
-
-        {user && (
-          <div className="user-controls">
-            <Link to="/credit-shop" className="credits-display">
-              {parseInt(user?.credits)} Credits
-            </Link>
-            <div className="desktop-notifications">
-              <Notifications />
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Mobile Navigation */}
@@ -135,24 +124,11 @@ const Navbar = () => {
         </h2>
         {user ? (
           <>
-            <div className="mobile-credits">
-              <Link to="/credit-shop" className="credits-display">
-                {parseInt(user?.credits)} Credits
-              </Link>
-            </div>
             <div className="mobile-notifications">
               <Notifications />
             </div>
             <div className={`mobile-menu ${isMobileMenuOpen ? "active" : ""}`}>
               <div className="mobile-column-left">
-                <div className="mobile-dropdown">
-                  <span
-                    className="mobile-nav-link"
-                    onClick={() => toggleDropdown("tournaments")}
-                  >
-                    Tournaments
-                  </span>
-                </div>
                 <Link
                   to="/campaigns"
                   className="mobile-nav-link"
@@ -164,14 +140,6 @@ const Navbar = () => {
               <div className="mobile-column-right">
                 {user && (
                   <>
-                    <div className="mobile-dropdown">
-                      <span
-                        className="mobile-nav-link"
-                        onClick={() => toggleDropdown("leaderboards")}
-                      >
-                        Leaderboards
-                      </span>
-                    </div>
                     <Link
                       to="/profile"
                       className="mobile-nav-link"
