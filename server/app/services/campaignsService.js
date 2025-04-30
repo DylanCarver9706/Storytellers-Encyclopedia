@@ -57,7 +57,7 @@ const sendCampaignInvite = async (campaignId, email) => {
 
   const inviteLink = `${
     process.env.ENV === "production"
-      ? process.env.PROD_CLIENT_URLS.split(",")[1]
+      ? process.env.PROD_CLIENT_URLS.split(",")[0]
       : process.env.DEV_CLIENT_URL
   }/Signup?ref=${campaignId}`;
 
