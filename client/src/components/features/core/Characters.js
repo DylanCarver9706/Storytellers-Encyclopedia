@@ -111,7 +111,8 @@ const Characters = ({ campaignId }) => {
     const fetchCharacters = async () => {
       try {
         const characters = await getCharactersByCampaignId(campaignId);
-        console.log("Characters:", characters);
+        if (process.env.REACT_APP_ENV === "development")
+          console.log("Characters:", characters);
 
         const characterNodes = characters.map((character, index) => ({
           id: character._id,
@@ -126,7 +127,8 @@ const Characters = ({ campaignId }) => {
           },
         }));
 
-        console.log("characterNodes:", characterNodes);
+        if (process.env.REACT_APP_ENV === "development")
+          console.log("characterNodes:", characterNodes);
 
         const characterEdges = characters
           .filter((character) => character.parentId)
@@ -136,7 +138,8 @@ const Characters = ({ campaignId }) => {
             target: character._id,
           }));
 
-        console.log("characterEdges:", characterEdges);
+        if (process.env.REACT_APP_ENV === "development")
+          console.log("characterEdges:", characterEdges);
 
         setNodes(characterNodes);
         setEdges(characterEdges);
