@@ -117,7 +117,10 @@ const Characters = ({ campaignId }) => {
         const characterNodes = characters.map((character, index) => ({
           id: character._id,
           type: "character",
-          position: { x: index * 200, y: Math.floor(index / 3) * 200 },
+          position: character.position || {
+            x: index * 200,
+            y: Math.floor(index / 3) * 200,
+          },
           data: {
             label: character.name,
             description: character.description,
@@ -152,21 +155,53 @@ const Characters = ({ campaignId }) => {
     // eslint-disable-next-line
   }, [campaignId]);
 
-  const handleEdit = useCallback((id) => {
-    setNodes((currentNodes) => {
-      const character = currentNodes.find((node) => node.id === id);
-      if (character) {
-        setEditingCharacterId(id);
-        setEditFormData({
-          name: character.data.label,
-          description: character.data.description || "",
-          parentId: character.data.parentId || null,
+  // Add onNodesChange handler to save positions
+  const onNodesChangeHandler = useCallback(
+    (changes) => {
+      onNodesChange(changes);
+
+      // Find position changes
+      const positionChanges = changes.filter(
+        (change) => change.type === "position" && change.dragging === false
+      );
+
+      if (positionChanges.length > 0) {
+        positionChanges.forEach(async (change) => {
+          try {
+            const node = nodes.find((n) => n.id === change.id);
+            if (node) {
+              await updateCharacter(change.id, {
+                position: node.position,
+                campaignId,
+              });
+            }
+          } catch (error) {
+            console.error("Error saving node position:", error);
+          }
         });
-        setIsEditCharacterModalOpen(true);
       }
-      return currentNodes;
-    });
-  }, [setNodes]);
+    },
+    [nodes, onNodesChange, campaignId]
+  );
+
+  const handleEdit = useCallback(
+    (id) => {
+      setNodes((currentNodes) => {
+        const character = currentNodes.find((node) => node.id === id);
+        if (character) {
+          setEditingCharacterId(id);
+          setEditFormData({
+            name: character.data.label,
+            description: character.data.description || "",
+            parentId: character.data.parentId || null,
+          });
+          setIsEditCharacterModalOpen(true);
+        }
+        return currentNodes;
+      });
+    },
+    [setNodes]
+  );
 
   const handleDelete = useCallback(
     async (id) => {
@@ -188,18 +223,20 @@ const Characters = ({ campaignId }) => {
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     try {
+      const position = {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      };
       const newCharacter = await createCharacter({
         ...createFormData,
         campaignId,
+        position,
       });
 
       const newNode = {
         id: newCharacter._id,
         type: "character",
-        position: {
-          x: Math.random() * 500,
-          y: Math.random() * 500,
-        },
+        position,
         data: {
           label: newCharacter.name,
           description: newCharacter.description,
@@ -230,7 +267,6 @@ const Characters = ({ campaignId }) => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-
       const updatedCharacter = await updateCharacter(editingCharacterId, {
         ...editFormData,
         campaignId,
@@ -257,7 +293,6 @@ const Characters = ({ campaignId }) => {
 
       // Update edges
       setEdges((currentEdges) => {
-
         // Remove any existing edges for this character
         const edgesWithoutCharacter = currentEdges.filter(
           (edge) => edge.target !== updatedCharacter._id
@@ -328,7 +363,7 @@ const Characters = ({ campaignId }) => {
           style={{ width: "80vw", height: "50vh", color: "black" }}
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
+          onNodesChange={onNodesChangeHandler}
           onEdgesChange={onEdgesChange}
           nodeTypes={nodeTypes}
           fitView

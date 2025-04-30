@@ -40,9 +40,14 @@ const updateCharacter = async (id, characterData) => {
     ...characterDataWithoutCampaignId,
     campaignId: ObjectId.createFromHexString(campaignId),
   };
-  return await updateMongoDocument(collections.charactersCollection, id, {
-    $set: mongoDocument,
-  }, true);
+  return await updateMongoDocument(
+    collections.charactersCollection,
+    id,
+    {
+      $set: mongoDocument,
+    },
+    true
+  );
 };
 
 const deleteCharacter = async (id) => {
