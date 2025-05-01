@@ -10,9 +10,15 @@ const getAllCharacters = async () => {
 };
 
 const getCharacterById = async (id) => {
-  return await collections.charactersCollection.findOne({
+  const character = await collections.charactersCollection.findOne({
     _id: ObjectId.createFromHexString(id),
   });
+  return {
+    ...character,
+    campaign: await collections.campaignsCollection.findOne({
+      _id: character.campaignId,
+    }),
+  };
 };
 
 const getCharactersByCampaignId = async (campaignId) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   getCharacterById,
   updateCharacter,
@@ -142,7 +142,9 @@ const Character = () => {
           )}
           <div className="detail-section">
             <h2>Campaign</h2>
-            <p>{character.campaignId}</p>
+            <Link to={`/campaign/${character.campaignId}`}>
+              {character.campaign.title}
+            </Link>
           </div>
         </div>
       )}
