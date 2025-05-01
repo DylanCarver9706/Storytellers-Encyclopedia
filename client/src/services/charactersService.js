@@ -76,3 +76,21 @@ export const deleteCharacter = async (id) => {
     throw err;
   }
 };
+
+export const getCharacterById = async (id) => {
+  try {
+    const response = await makeAuthenticatedRequest(`/api/characters/${id}`, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch character.");
+    }
+
+    return await response.json();
+  } catch (err) {
+    if (process.env.REACT_APP_ENV === "development")
+      console.error("Error fetching character:", err.message);
+    throw err;
+  }
+};

@@ -1,0 +1,152 @@
+.character-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.character-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.character-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.character-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.edit-button,
+.delete-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.edit-button {
+  background-color: #2196f3;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #1976d2;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+}
+
+.character-form {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.form-actions button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.form-actions button[type="button"] {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.form-actions button[type="button"]:hover {
+  background-color: #e0e0e0;
+}
+
+.form-actions button[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+}
+
+.form-actions button[type="submit"]:hover {
+  background-color: #388e3c;
+}
+
+.character-details {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.detail-section {
+  margin-bottom: 2rem;
+}
+
+.detail-section h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.detail-section p {
+  color: #666;
+  line-height: 1.6;
+}
+
+.character-loading,
+.character-error,
+.character-not-found {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.character-error {
+  color: #f44336;
+}
