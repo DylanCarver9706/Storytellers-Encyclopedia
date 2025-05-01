@@ -17,6 +17,7 @@ import {
   deleteCharacter,
   updateCharacter,
 } from "../../../services/charactersService";
+import { useNavigate } from "react-router-dom";
 
 // Custom node component
 const CharacterNode = ({ data, id }) => {
@@ -112,6 +113,8 @@ const CharactersFlow = ({ campaignId }) => {
     description: "",
     parentId: null,
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -492,6 +495,20 @@ const CharactersFlow = ({ campaignId }) => {
                       }}
                     >
                       Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/character/${viewingCharacterId}`)}
+                      style={{
+                        padding: "8px 16px",
+                        backgroundColor: "#4CAF50",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      View More
                     </button>
                   </div>
                 </>

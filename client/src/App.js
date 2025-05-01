@@ -35,6 +35,7 @@ import Spinner from "./components/common/Spinner";
 import Campaigns from "./components/features/core/Campaigns";
 import Campaign from "./components/features/core/Campaign";
 import Timeline from "./components/features/core/Timeline";
+import Character from "./components/features/core/Character";
 
 function App() {
   usePageTracking();
@@ -281,6 +282,14 @@ function App() {
             element={
               <PrivateRoute authorized={loggedIn}>
                 <Timeline />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/character/:id"
+            element={
+              <PrivateRoute authorized={loggedIn}>
+                <Character />
               </PrivateRoute>
             }
           />
