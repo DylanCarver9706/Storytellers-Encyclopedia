@@ -6,6 +6,7 @@ import { sendCampaignInvite } from "../../../services/campaignsService";
 import Timelines from "./Timelines";
 import Characters from "./Characters";
 import "../../../styles/components/core/Campaign.css";
+import Spinner from "../../common/Spinner";
 
 const Campaign = () => {
   const [campaign, setCampaign] = useState(null);
@@ -70,7 +71,7 @@ const Campaign = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
 
   if (!campaign) {

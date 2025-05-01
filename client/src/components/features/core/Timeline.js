@@ -8,6 +8,7 @@ import {
   deleteEvent,
 } from "../../../services/eventsService";
 import "../../../styles/components/core/Timeline.css";
+import Spinner from "../../common/Spinner";
 
 const DEFAULT_MAP_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/7/73/Mercator_projection_Square.JPG";
@@ -536,7 +537,7 @@ const Timeline = () => {
   );
 
   if (!timeline) {
-    return <div>Loading...</div>;
+    return<Spinner />;
   }
 
   return (
