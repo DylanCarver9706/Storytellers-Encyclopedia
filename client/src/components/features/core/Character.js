@@ -231,16 +231,14 @@ const Character = () => {
 
       <div className="character-details">
         <div className="detail-section">
-          <h2>Description</h2>
+          <h2>Bio</h2>
           <TextField
             fullWidth
             multiline
             rows={4}
-            label="Description"
-            value={character.description || ""}
-            onChange={(e) =>
-              handleBasicFieldChange("description", e.target.value)
-            }
+            label="Bio"
+            value={character.bio || ""}
+            onChange={(e) => handleBasicFieldChange("bio", e.target.value)}
             sx={inputStyles}
           />
         </div>

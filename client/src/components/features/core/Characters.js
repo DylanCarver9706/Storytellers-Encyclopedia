@@ -105,12 +105,12 @@ const CharactersFlow = ({ campaignId }) => {
   const [viewingCharacterId, setViewingCharacterId] = useState(null);
   const [createFormData, setCreateFormData] = useState({
     name: "",
-    description: "",
+    bio: "",
     parentId: null,
   });
   const [editFormData, setEditFormData] = useState({
     name: "",
-    description: "",
+    bio: "",
     parentId: null,
   });
 
@@ -132,7 +132,7 @@ const CharactersFlow = ({ campaignId }) => {
           },
           data: {
             label: character.name,
-            description: character.description,
+            bio: character.bio,
             parentId: character.parentId,
             onEdit: handleEdit,
             onDelete: handleDelete,
@@ -201,7 +201,7 @@ const CharactersFlow = ({ campaignId }) => {
           setEditingCharacterId(id);
           setEditFormData({
             name: character.data.label,
-            description: character.data.description || "",
+            bio: character.data.bio || "",
             parentId: character.data.parentId || null,
           });
           setIsEditCharacterModalOpen(true);
@@ -248,7 +248,7 @@ const CharactersFlow = ({ campaignId }) => {
         position,
         data: {
           label: newCharacter.name,
-          description: newCharacter.description,
+          bio: newCharacter.bio,
           parentId: newCharacter.parentId,
           onEdit: handleEdit,
           onDelete: handleDelete,
@@ -272,7 +272,7 @@ const CharactersFlow = ({ campaignId }) => {
       }, 0);
 
       setIsNewCharacterModalOpen(false);
-      setCreateFormData({ name: "", description: "", parentId: null });
+      setCreateFormData({ name: "", bio: "", parentId: null });
     } catch (error) {
       console.error("Error creating character:", error);
     }
@@ -295,7 +295,7 @@ const CharactersFlow = ({ campaignId }) => {
               data: {
                 ...node.data,
                 label: updatedCharacter.name,
-                description: updatedCharacter.description,
+                bio: updatedCharacter.bio,
                 parentId: updatedCharacter.parentId,
               },
             };
@@ -331,7 +331,7 @@ const CharactersFlow = ({ campaignId }) => {
 
       setIsEditCharacterModalOpen(false);
       setEditingCharacterId(null);
-      setEditFormData({ name: "", description: "", parentId: null });
+      setEditFormData({ name: "", bio: "", parentId: null });
     } catch (error) {
       console.error("Error updating character:", error);
     }
@@ -438,10 +438,10 @@ const CharactersFlow = ({ campaignId }) => {
                     </p>
                   </div>
                   <div style={{ marginBottom: "15px" }}>
-                    <h3 style={{ marginBottom: "5px" }}>Description</h3>
+                    <h3 style={{ marginBottom: "5px" }}>Bio</h3>
                     <p>
                       {nodes.find((n) => n.id === viewingCharacterId)?.data
-                        .description || "No description"}
+                        .bio || "No bio"}
                     </p>
                   </div>
                   <div style={{ marginBottom: "15px" }}>
@@ -498,7 +498,9 @@ const CharactersFlow = ({ campaignId }) => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => navigate(`/character/${viewingCharacterId}`)}
+                      onClick={() =>
+                        navigate(`/character/${viewingCharacterId}`)
+                      }
                       style={{
                         padding: "8px 16px",
                         backgroundColor: "#4CAF50",
@@ -557,11 +559,11 @@ const CharactersFlow = ({ campaignId }) => {
                 </div>
                 <div style={{ marginBottom: "15px" }}>
                   <label style={{ display: "block", marginBottom: "5px" }}>
-                    Description
+                    Bio
                   </label>
                   <textarea
-                    name="description"
-                    value={createFormData.description}
+                    name="bio"
+                    value={createFormData.bio}
                     onChange={handleCreateInputChange}
                     style={{ width: "100%", padding: "8px", height: "100px" }}
                   />
@@ -664,11 +666,11 @@ const CharactersFlow = ({ campaignId }) => {
                 </div>
                 <div style={{ marginBottom: "15px" }}>
                   <label style={{ display: "block", marginBottom: "5px" }}>
-                    Description
+                    Bio
                   </label>
                   <textarea
-                    name="description"
-                    value={editFormData.description}
+                    name="bio"
+                    value={editFormData.bio}
                     onChange={handleEditInputChange}
                     style={{ width: "100%", padding: "8px", height: "100px" }}
                   />
@@ -707,7 +709,7 @@ const CharactersFlow = ({ campaignId }) => {
                       setEditingCharacterId(null);
                       setEditFormData({
                         name: "",
-                        description: "",
+                        bio: "",
                         parentId: null,
                       });
                     }}

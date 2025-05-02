@@ -212,8 +212,8 @@ const CharacterAttributeFormInputs = ({
             value={value}
             onChange={handleTextChange(attrName)}
             margin="normal"
-            multiline={attrName === "Description"}
-            rows={attrName === "Description" ? 4 : 1}
+            multiline={attrName === "Bio"}
+            rows={attrName === "Bio" ? 4 : 1}
             sx={inputStyles}
           />
         );
