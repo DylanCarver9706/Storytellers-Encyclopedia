@@ -9,7 +9,30 @@ import Spinner from "../../common/Spinner";
 import "../../../styles/components/core/Character.css";
 import { characterAttributesConfig } from "../../../config/characterAttributesConfig";
 import CharacterAttributeFormInputs from "./CharacterAttributeFormInputs";
-console.log(characterAttributesConfig.length);
+import { TextField } from "@mui/material";
+
+const inputStyles = {
+  "& .MuiInputBase-input": {
+    color: "white",
+  },
+  "& .MuiInputLabel-root": {
+    color: "rgba(255, 255, 255, 0.7)",
+  },
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "white",
+  },
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "rgba(255, 255, 255, 0.23)",
+    },
+    "&:hover fieldset": {
+      borderColor: "rgba(255, 255, 255, 0.5)",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "white",
+    },
+  },
+};
 
 const Character = () => {
   const { id } = useParams();
@@ -38,9 +61,22 @@ const Character = () => {
     fetchCharacter();
   }, [id]);
 
+  const handleBasicFieldChange = async (field, value) => {
+    try {
+      const updatedCharacter = {
+        ...character,
+        [field]: value,
+      };
+
+      await updateCharacter(id, updatedCharacter);
+      setCharacter(updatedCharacter);
+    } catch (err) {
+      setError(`Failed to update ${field}`);
+    }
+  };
+
   const handleAttributeChange = async (name, value) => {
     try {
-      // Create a new copy of the character with the updated attribute
       const updatedCharacter = {
         ...character,
         attributes: {
@@ -55,10 +91,7 @@ const Character = () => {
         },
       };
 
-      // Update the character in the database
       await updateCharacter(id, updatedCharacter);
-
-      // Update the local state
       setCharacter(updatedCharacter);
     } catch (err) {
       setError("Failed to update attribute");
@@ -78,35 +111,30 @@ const Character = () => {
 
   const handleAttributeToggle = async (attributeName) => {
     try {
-      // Create a new copy of the attributes object
       const updatedAttributes = { ...character.attributes };
       const attribute = updatedAttributes[selectedCategory][attributeName];
 
-      // Update the attribute's inUse status
       updatedAttributes[selectedCategory][attributeName] = {
         ...attribute,
         inUse: !attribute.inUse,
       };
 
-      // Immediately update the UI with the new state
       setCharacter((prevCharacter) => ({
         ...prevCharacter,
         attributes: updatedAttributes,
       }));
 
-      // Make the API call
       await updateCharacter(id, {
         ...character,
         attributes: updatedAttributes,
       });
     } catch (err) {
-      // Revert the change if the API call fails
       const revertedAttributes = { ...character.attributes };
       const attribute = revertedAttributes[selectedCategory][attributeName];
 
       revertedAttributes[selectedCategory][attributeName] = {
         ...attribute,
-        inUse: !attribute.inUse, // Revert back to original state
+        inUse: !attribute.inUse,
       };
 
       setCharacter((prevCharacter) => ({
@@ -137,7 +165,13 @@ const Character = () => {
     <div className="character-container">
       {error && <div className="character-error">{error}</div>}
       <div className="character-header">
-        <h1>{character.name}</h1>
+        <TextField
+          fullWidth
+          label="Name"
+          value={character.name}
+          onChange={(e) => handleBasicFieldChange("name", e.target.value)}
+          sx={{ ...inputStyles, maxWidth: "400px" }}
+        />
         <div className="character-actions">
           <button
             className="attributes-button"
@@ -152,17 +186,57 @@ const Character = () => {
       </div>
 
       <div className="character-details">
-        {characterAttributesConfig.map((category) => (
-          <div key={category.name} className="detail-section">
-            <h2>{category.name}</h2>
-            <CharacterAttributeFormInputs
-              category={category}
-              attributes={category.attributes}
-              onChange={handleAttributeChange}
-              values={character.attributes}
-            />
+        <div className="detail-section">
+          <h2>Description</h2>
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            label="Description"
+            value={character.description || ""}
+            onChange={(e) =>
+              handleBasicFieldChange("description", e.target.value)
+            }
+            sx={inputStyles}
+          />
+        </div>
+
+        {character.parentId && (
+          <div className="detail-section">
+            <h2>Parent Character</h2>
+            <p>{character.parentId}</p>
           </div>
-        ))}
+        )}
+
+        <div className="detail-section">
+          <h2>Campaign</h2>
+          <Link
+            to={`/campaign/${character.campaignId}`}
+            className="campaign-link"
+          >
+            {character.campaign.title}
+          </Link>
+        </div>
+
+        {characterAttributesConfig.map((category) => {
+          const hasSelectedAttributes =
+            character.attributes[category.name] &&
+            Object.values(character.attributes[category.name]).some(
+              (attr) => attr.inUse
+            );
+
+          return hasSelectedAttributes ? (
+            <div key={category.name} className="detail-section">
+              <h2>{category.name}</h2>
+              <CharacterAttributeFormInputs
+                category={category}
+                attributes={category.attributes}
+                onChange={handleAttributeChange}
+                values={character.attributes}
+              />
+            </div>
+          ) : null;
+        })}
       </div>
 
       {isAttributesModalOpen && (
