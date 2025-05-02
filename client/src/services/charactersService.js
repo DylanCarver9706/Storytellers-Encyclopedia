@@ -94,3 +94,4 @@ export const getCharacterById = async (id) => {
     throw err;
   }
 };
+ 
