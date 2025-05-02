@@ -5,8 +5,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Slider,
   Checkbox,
+  Slider,
 } from "@mui/material";
 
 const inputStyles = {
@@ -30,81 +30,190 @@ const inputStyles = {
       borderColor: "white",
     },
   },
-  "& .MuiSelect-icon": {
-    color: "white",
-  },
 };
 
 const selectStyles = {
   ...inputStyles,
-  "& .MuiSelect-select": {
-    color: "white",
+  "& .MuiSelect-icon": {
+    color: "rgba(255, 255, 255, 0.7)",
   },
 };
 
 const menuItemStyles = {
-  "&.MuiMenuItem-root": {
-    color: "white",
-    backgroundColor: "#1e1e1e",
-    "&:hover": {
-      backgroundColor: "#333",
-    },
+  color: "white",
+  "&:hover": {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   "&.Mui-selected": {
-    backgroundColor: "#2a2a2a",
+    backgroundColor: "rgba(63, 81, 181, 0.2)",
     "&:hover": {
-      backgroundColor: "#333",
+      backgroundColor: "rgba(63, 81, 181, 0.3)",
     },
   },
 };
 
 const sliderStyles = {
-  color: "white",
-  "& .MuiSlider-rail": {
-    color: "rgba(255, 255, 255, 0.23)",
+  color: "#3f51b5",
+  "& .MuiSlider-thumb": {
+    backgroundColor: "#3f51b5",
   },
   "& .MuiSlider-track": {
-    color: "white",
+    backgroundColor: "#3f51b5",
   },
-  "& .MuiSlider-thumb": {
-    color: "white",
+  "& .MuiSlider-rail": {
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  "& .MuiSlider-mark": {
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  "& .MuiSlider-markLabel": {
+    color: "rgba(255, 255, 255, 0.7)",
   },
   "& .MuiSlider-valueLabel": {
-    backgroundColor: "#1e1e1e",
+    backgroundColor: "#3f51b5",
     color: "white",
   },
 };
 
-const CharacterAttributeFormInputs = ({ category, attributes, onChange, values }) => {
+const CharacterAttributeFormInputs = ({
+  category,
+  attributes,
+  onChange,
+  values,
+}) => {
   const handleTextChange = (name) => (event) => {
-    onChange(name, event.target.value);
+    onChange(category, name, event.target.value);
   };
 
   const handleMultiSelectChange = (name) => (event) => {
-    onChange(name, event.target.value);
+    const selectedValues = event.target.value;
+    onChange(category, name, selectedValues);
   };
 
   const handleSliderChange = (name) => (event, newValue) => {
-    onChange(name, newValue);
+    onChange(category, name, newValue);
   };
 
-  const renderFormField = (attribute) => {
-    if (!values[category.name][attribute.name]["inUse"]) {
+  const renderSectionedMultiSelect = (attrName, attribute, value) => (
+    <FormControl fullWidth margin="normal">
+      <InputLabel sx={{ color: "rgba(255, 255, 255, 0.7)" }}>
+        {attrName}
+      </InputLabel>
+      <Select
+        multiple
+        value={Array.isArray(value) ? value : []}
+        onChange={handleMultiSelectChange(attrName)}
+        renderValue={(selected) => selected.join(", ")}
+        sx={selectStyles}
+        MenuProps={{
+          PaperProps: {
+            sx: {
+              bgcolor: "#1e1e1e",
+              "& .MuiMenuItem-root": menuItemStyles,
+              "& .MuiDivider-root": {
+                borderColor: "rgba(255, 255, 255, 0.12)",
+              },
+            },
+          },
+        }}
+      >
+        {attribute.options.flatMap((section) => [
+          <MenuItem
+            key={section.label}
+            disabled
+            sx={{
+              color: "rgba(255, 255, 255, 0.7)",
+              fontWeight: "bold",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+            }}
+          >
+            {section.label}
+          </MenuItem>,
+          ...section.options
+            .filter((option) => typeof option === "string")
+            .map((option) => (
+              <MenuItem key={option} value={option} sx={menuItemStyles}>
+                <Checkbox
+                  checked={value?.includes(option)}
+                  sx={{
+                    color: "rgba(255, 255, 255, 0.7)",
+                    "&.Mui-checked": {
+                      color: "white",
+                    },
+                  }}
+                />
+                {option}
+              </MenuItem>
+            )),
+        ])}
+      </Select>
+    </FormControl>
+  );
+
+  const renderFlatMultiSelect = (attrName, attribute, value) => (
+    <FormControl fullWidth margin="normal">
+      <InputLabel sx={{ color: "rgba(255, 255, 255, 0.7)" }}>
+        {attrName}
+      </InputLabel>
+      <Select
+        multiple
+        value={Array.isArray(value) ? value : []}
+        onChange={handleMultiSelectChange(attrName)}
+        renderValue={(selected) => selected.join(", ")}
+        sx={selectStyles}
+        MenuProps={{
+          PaperProps: {
+            sx: {
+              bgcolor: "#1e1e1e",
+              "& .MuiMenuItem-root": menuItemStyles,
+              "& .MuiDivider-root": {
+                borderColor: "rgba(255, 255, 255, 0.12)",
+              },
+            },
+          },
+        }}
+      >
+        {attribute.options
+          .filter((option) => typeof option === "string")
+          .map((option) => (
+            <MenuItem key={option} value={option} sx={menuItemStyles}>
+              <Checkbox
+                checked={value?.includes(option)}
+                sx={{
+                  color: "rgba(255, 255, 255, 0.7)",
+                  "&.Mui-checked": {
+                    color: "white",
+                  },
+                }}
+              />
+              {option}
+            </MenuItem>
+          ))}
+      </Select>
+    </FormControl>
+  );
+
+  const renderFormField = (attrName, attribute) => {
+    if (!attribute.inUse) {
       return null;
     }
-    const value = values[category.name][attribute.name]["value"] || attribute.default;
+
+    const value =
+      attribute.value !== undefined && attribute.value !== null
+        ? attribute.value
+        : attribute.default;
 
     switch (attribute.type) {
       case "Text":
         return (
           <TextField
             fullWidth
-            label={attribute.name}
+            label={attrName}
             value={value}
-            onChange={handleTextChange(attribute.name)}
+            onChange={handleTextChange(attrName)}
             margin="normal"
-            multiline={attribute.name === "Description"}
-            rows={attribute.name === "Description" ? 4 : 1}
+            multiline={attrName === "Description"}
+            rows={attrName === "Description" ? 4 : 1}
             sx={inputStyles}
           />
         );
@@ -114,9 +223,9 @@ const CharacterAttributeFormInputs = ({ category, attributes, onChange, values }
           <TextField
             fullWidth
             type="number"
-            label={attribute.name}
-            value={value}
-            onChange={handleTextChange(attribute.name)}
+            label={attrName}
+            value={parseFloat(value)}
+            onChange={handleTextChange(attrName)}
             margin="normal"
             sx={inputStyles}
           />
@@ -124,89 +233,12 @@ const CharacterAttributeFormInputs = ({ category, attributes, onChange, values }
 
       case "Multi-Select":
         if (!attribute.options) return null;
-
         const hasNestedOptions = attribute.options.some(
           (option) => typeof option === "object" && option.isSection
         );
-
-        return (
-          <FormControl fullWidth margin="normal">
-            <InputLabel sx={{ color: "rgba(255, 255, 255, 0.7)" }}>
-              {attribute.name}
-            </InputLabel>
-            <Select
-              multiple
-              value={Array.isArray(value) ? value : []}
-              onChange={handleMultiSelectChange(attribute.name)}
-              renderValue={(selected) => selected.join(", ")}
-              sx={selectStyles}
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    bgcolor: "#1e1e1e",
-                    "& .MuiMenuItem-root": menuItemStyles,
-                    "& .MuiDivider-root": {
-                      borderColor: "rgba(255, 255, 255, 0.12)",
-                    },
-                  },
-                },
-              }}
-            >
-              {hasNestedOptions
-                ? attribute.options.map((section) => [
-                    <MenuItem
-                      key={section.label}
-                      disabled
-                      sx={{ color: "rgba(255, 255, 255, 0.7)" }}
-                    >
-                      {section.label}
-                    </MenuItem>,
-                    ...section.options.map((option) => (
-                      <MenuItem
-                        key={option}
-                        value={option}
-                        sx={{ ...menuItemStyles, paddingLeft: 4 }}
-                      >
-                        <Checkbox
-                          checked={value?.includes(option)}
-                          sx={{
-                            color: "rgba(255, 255, 255, 0.7)",
-                            "&.Mui-checked": {
-                              color: "white",
-                            },
-                          }}
-                        />
-                        {option}
-                      </MenuItem>
-                    )),
-                  ])
-                : attribute.options.map((option) => {
-                    if (option === "[line-divider]") {
-                      return (
-                        <hr
-                          key={`divider-${option}`}
-                          style={{ borderColor: "rgba(255, 255, 255, 0.12)" }}
-                        />
-                      );
-                    }
-                    return (
-                      <MenuItem key={option} value={option} sx={menuItemStyles}>
-                        <Checkbox
-                          checked={value?.includes(option)}
-                          sx={{
-                            color: "rgba(255, 255, 255, 0.7)",
-                            "&.Mui-checked": {
-                              color: "white",
-                            },
-                          }}
-                        />
-                        {option}
-                      </MenuItem>
-                    );
-                  })}
-            </Select>
-          </FormControl>
-        );
+        return hasNestedOptions
+          ? renderSectionedMultiSelect(attrName, attribute, value)
+          : renderFlatMultiSelect(attrName, attribute, value);
 
       case "Slider":
         return (
@@ -217,11 +249,11 @@ const CharacterAttributeFormInputs = ({ category, attributes, onChange, values }
                 transform: "translate(0, -1.5rem)",
               }}
             >
-              {attribute.name}
+              {attrName}
             </InputLabel>
             <Slider
               value={typeof value === "number" ? value : attribute.default}
-              onChange={handleSliderChange(attribute.name)}
+              onChange={handleSliderChange(attrName)}
               min={attribute.min}
               max={attribute.max}
               step={attribute.step}
@@ -241,12 +273,12 @@ const CharacterAttributeFormInputs = ({ category, attributes, onChange, values }
                 transform: "translate(0, -1.5rem)",
               }}
             >
-              {attribute.name}
+              {attrName}
             </InputLabel>
             <input
               type="color"
               value={value || "#FFFFFF"}
-              onChange={handleTextChange(attribute.name)}
+              onChange={handleTextChange(attrName)}
               style={{
                 width: "100%",
                 height: "50px",
@@ -266,9 +298,9 @@ const CharacterAttributeFormInputs = ({ category, attributes, onChange, values }
 
   return (
     <div className="basic-info-attributes">
-      {attributes?.map((attribute) => (
-        <div key={attribute.name} className="attribute-field">
-          {renderFormField(attribute)}
+      {Object.entries(attributes).map(([attrName, attribute]) => (
+        <div key={attrName} className="attribute-field">
+          {renderFormField(attrName, attribute)}
         </div>
       ))}
     </div>

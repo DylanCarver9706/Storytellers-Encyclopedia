@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   getCharacterById,
   updateCharacter,
   deleteCharacter,
+  updateCharacterAttributes,
 } from "../../../services/charactersService";
 import Spinner from "../../common/Spinner";
 import "../../../styles/components/core/Character.css";
-import { characterAttributesConfig } from "../../../config/characterAttributesConfig";
 import CharacterAttributeFormInputs from "./CharacterAttributeFormInputs";
 import { TextField } from "@mui/material";
 
@@ -42,6 +42,8 @@ const Character = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const updateTimeoutRef = useRef(null);
+  const attributeUpdateTimeoutRef = useRef(null);
 
   useEffect(() => {
     const fetchCharacter = async () => {
@@ -61,41 +63,83 @@ const Character = () => {
     fetchCharacter();
   }, [id]);
 
-  const handleBasicFieldChange = async (field, value) => {
-    try {
-      const updatedCharacter = {
-        ...character,
-        [field]: value,
-      };
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+      if (attributeUpdateTimeoutRef.current) {
+        clearTimeout(attributeUpdateTimeoutRef.current);
+      }
+    };
+  }, []);
 
-      await updateCharacter(id, updatedCharacter);
-      setCharacter(updatedCharacter);
-    } catch (err) {
-      setError(`Failed to update ${field}`);
+  const handleBasicFieldChange = (field, value) => {
+    // Optimistically update state
+    const updatedCharacter = {
+      ...character,
+      [field]: value,
+    };
+    setCharacter(updatedCharacter);
+
+    // Clear any existing timeout
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
     }
+
+    // Set new timeout for 500ms
+    updateTimeoutRef.current = setTimeout(async () => {
+      try {
+        await updateCharacter(id, updatedCharacter);
+      } catch (err) {
+        setError(`Failed to update ${field}`);
+      }
+    }, 500);
   };
 
-  const handleAttributeChange = async (name, value) => {
-    try {
-      const updatedCharacter = {
-        ...character,
-        attributes: {
-          ...character.attributes,
-          [selectedCategory]: {
-            ...character.attributes[selectedCategory],
-            [name]: {
-              ...character.attributes[selectedCategory][name],
-              value: value,
-            },
-          },
-        },
-      };
-
-      await updateCharacter(id, updatedCharacter);
-      setCharacter(updatedCharacter);
-    } catch (err) {
-      setError("Failed to update attribute");
+  const handleAttributeChange = (category, name, value) => {
+    // Optimistically update state
+    const attr = character.attributes[category][name];
+    const attrType = attr?.type;
+    let safeValue = value;
+    if (attrType === "Multi-Select") {
+      if (!Array.isArray(value)) {
+        safeValue = [];
+      } else {
+        safeValue = value.filter((v) => typeof v === "string");
+      }
     }
+    const updatedAttributes = {
+      ...character.attributes,
+      [category]: {
+        ...character.attributes[category],
+        [name]: {
+          ...character.attributes[category][name],
+          value: safeValue,
+        },
+      },
+    };
+    setCharacter((prev) => ({ ...prev, attributes: updatedAttributes }));
+
+    // Clear any existing timeout
+    if (attributeUpdateTimeoutRef.current) {
+      clearTimeout(attributeUpdateTimeoutRef.current);
+    }
+
+    // Set new timeout for 500ms
+    attributeUpdateTimeoutRef.current = setTimeout(async () => {
+      try {
+        await updateCharacterAttributes(
+          character._id,
+          category,
+          name,
+          safeValue
+        );
+      } catch (err) {
+        setError("Failed to update attribute");
+      }
+    }, 500);
   };
 
   const handleDelete = async () => {
@@ -218,25 +262,25 @@ const Character = () => {
           </Link>
         </div>
 
-        {characterAttributesConfig.map((category) => {
-          const hasSelectedAttributes =
-            character.attributes[category.name] &&
-            Object.values(character.attributes[category.name]).some(
+        {Object.entries(character.attributes || {}).map(
+          ([categoryName, category]) => {
+            const hasSelectedAttributes = Object.values(category).some(
               (attr) => attr.inUse
             );
 
-          return hasSelectedAttributes ? (
-            <div key={category.name} className="detail-section">
-              <h2>{category.name}</h2>
-              <CharacterAttributeFormInputs
-                category={category}
-                attributes={category.attributes}
-                onChange={handleAttributeChange}
-                values={character.attributes}
-              />
-            </div>
-          ) : null;
-        })}
+            return hasSelectedAttributes ? (
+              <div key={categoryName} className="detail-section">
+                <h2>{categoryName}</h2>
+                <CharacterAttributeFormInputs
+                  category={categoryName}
+                  attributes={category}
+                  onChange={handleAttributeChange}
+                  values={character.attributes}
+                />
+              </div>
+            ) : null;
+          }
+        )}
       </div>
 
       {isAttributesModalOpen && (
@@ -253,7 +297,7 @@ const Character = () => {
             </div>
             <div className="modal-body">
               <div className="category-sidebar">
-                {Object.keys(character.attributes).map((categoryName) => (
+                {Object.keys(character.attributes || {}).map((categoryName) => (
                   <div
                     key={categoryName}
                     className={`category-item ${

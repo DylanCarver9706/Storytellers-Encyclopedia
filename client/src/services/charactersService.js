@@ -94,4 +94,30 @@ export const getCharacterById = async (id) => {
     throw err;
   }
 };
- 
+
+export const updateCharacterAttributes = async (
+  id,
+  category,
+  attribute,
+  value
+) => {
+  try {
+    const response = await makeAuthenticatedRequest(
+      `/api/characters/${id}/attributes`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ category, attribute, value }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update character attributes.");
+    }
+
+    return await response.json();
+  } catch (err) {
+    if (process.env.REACT_APP_ENV === "development")
+      console.error("Error updating character attributes:", err.message);
+    throw err;
+  }
+};
