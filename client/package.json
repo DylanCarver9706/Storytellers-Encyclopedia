@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^7.0.2",
     "@stripe/stripe-js": "^5.5.0",
     "@supabase/supabase-js": "^2.49.1",
     "@testing-library/jest-dom": "^5.17.0",
