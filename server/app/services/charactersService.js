@@ -4,7 +4,9 @@ const {
   createMongoDocument,
   updateMongoDocument,
 } = require("../../database/middlewares/mongo");
-const { characterAttributesConfig } = require("../config/characterAttributesConfig");
+const {
+  characterAttributesConfig,
+} = require("../config/characterAttributesConfig");
 
 const getAllCharacters = async () => {
   return await collections.charactersCollection.find().toArray();
@@ -68,6 +70,19 @@ const deleteCharacter = async (id) => {
   });
 };
 
+const updateCharacterAttributes = async (id, attributesPatch) => {
+  const { category, attribute, value } = attributesPatch;
+  if (process.env.ENV === "development") {
+    console.log("attributesPatch", attributesPatch);
+  }
+  return await updateMongoDocument(
+    collections.charactersCollection,
+    id,
+    { $set: { [`attributes.${category}.${attribute}.value`]: value } },
+    true
+  );
+};
+
 module.exports = {
   getAllCharacters,
   getCharacterById,
@@ -75,4 +90,5 @@ module.exports = {
   createCharacter,
   updateCharacter,
   deleteCharacter,
+  updateCharacterAttributes,
 };

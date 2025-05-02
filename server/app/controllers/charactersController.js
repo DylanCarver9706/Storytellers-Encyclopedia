@@ -61,6 +61,19 @@ const deleteCharacter = async (req, res, logError) => {
   }
 };
 
+const updateCharacterAttributes = async (req, res, logError) => {
+  try {
+    const { category, attribute, value } = req.body;
+    const updated = await characterService.updateCharacterAttributes(
+      req.params.id,
+      { category, attribute, value }
+    );
+    res.status(200).json(updated);
+  } catch (error) {
+    logError(error);
+  }
+};
+
 module.exports = {
   getAllCharacters,
   getCharacterById,
@@ -68,4 +81,5 @@ module.exports = {
   createCharacter,
   updateCharacter,
   deleteCharacter,
+  updateCharacterAttributes,
 };

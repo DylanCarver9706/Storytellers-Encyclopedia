@@ -12,6 +12,11 @@ router.get(
 );
 router.post("/", verifyFirebaseToken(), characterController.createCharacter);
 router.put("/:id", verifyFirebaseToken(), characterController.updateCharacter);
+router.put(
+  "/:id/attributes",
+  verifyFirebaseToken(),
+  characterController.updateCharacterAttributes
+);
 router.delete(
   "/:id",
   verifyFirebaseToken(),
