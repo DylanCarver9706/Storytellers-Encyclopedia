@@ -4,6 +4,7 @@ const {
   createMongoDocument,
   updateMongoDocument,
 } = require("../../database/middlewares/mongo");
+const { characterAttributesConfig } = require("../config/characterAttributesConfig");
 
 const getAllCharacters = async () => {
   return await collections.charactersCollection.find().toArray();
@@ -32,6 +33,7 @@ const createCharacter = async (characterData) => {
   const mongoDocument = {
     ...characterDataWithoutCampaignId,
     campaignId: ObjectId.createFromHexString(campaignId),
+    attributes: characterAttributesConfig,
   };
   return await createMongoDocument(
     collections.charactersCollection,
@@ -42,6 +44,10 @@ const createCharacter = async (characterData) => {
 
 const updateCharacter = async (id, characterData) => {
   const { campaignId, ...characterDataWithoutCampaignId } = characterData;
+  // Delete the _id from the characterDataWithoutCampaignId if it exists
+  if (characterDataWithoutCampaignId._id) {
+    delete characterDataWithoutCampaignId._id;
+  }
   const mongoDocument = {
     ...characterDataWithoutCampaignId,
     campaignId: ObjectId.createFromHexString(campaignId),
