@@ -5,30 +5,26 @@ const { verifyFirebaseToken } = require("../middlewares/firebaseAdmin");
 
 const router = express.Router();
 
-// ✅ Set up Multer for handling multiple file uploads
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB max file size
-    files: 3, // Max number of files
-  },
-});
-
-router.post(
-  "/storage/upload",
-  verifyFirebaseToken(),
-  upload.fields([
-    { name: "frontImage", maxCount: 1 },
-    { name: "backImage", maxCount: 1 },
-    { name: "selfieImage", maxCount: 1 },
-  ]),
-  firebaseController.uploadIdvDocuments
-);
-
 router.get(
   "/storage/identity-verification-images",
   verifyFirebaseToken(true),
   firebaseController.getIdentityVerificationImages
+);
+
+// Set up Multer for handling single map image upload
+const uploadMap = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB max file size
+    files: 1, // Only one file per upload
+  },
+});
+
+router.post(
+  "/storage/upload-map",
+  verifyFirebaseToken(),
+  uploadMap.single("mapImage"),
+  firebaseController.uploadMapImage
 );
 
 router.post(

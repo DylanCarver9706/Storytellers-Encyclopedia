@@ -31,7 +31,7 @@ export const usePageTracking = () => {
 export const sendImagesToAPI = async (formData) => {
   try {
     const response = await makeAuthenticatedRequest(
-      "/api/firebase/storage/upload",
+      "/api/firebase/storage/upload-map",
       {
         method: "POST",
         body: formData,
