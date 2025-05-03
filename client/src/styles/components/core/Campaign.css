@@ -1,20 +1,34 @@
 .campaign-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #121212;
+  padding-top: 80px;
+}
+
+.campaign-main {
+  flex: 1;
+  margin-left: 250px;
   padding: 2rem;
   max-width: 1200px;
-  margin: 0 auto;
 }
 
 .campaign-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 2rem;
 }
 
 .campaign-title {
   font-size: 2.5rem;
-  color: #fff;
-  margin-bottom: 1.5rem;
+  color: #ffffff;
+  margin: 0;
+}
+
+.campaign-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .campaign-players {
@@ -252,4 +266,25 @@
   color: #4caf50;
   margin-top: 0.5rem;
   font-size: 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .campaign-main {
+    margin-left: 200px;
+    padding: 1.5rem;
+  }
+  .campaign-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .campaign-container {
+    padding-top: 0;
+  }
+  .campaign-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
 }
