@@ -202,8 +202,8 @@
 
 /* Node styles */
 .character-node-square {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   background-color: #23243a;
   border: 2px solid #444;
   border-radius: 12px;
@@ -378,6 +378,45 @@
   border: 1px solid #444;
   border-radius: 4px;
   font-size: 1rem;
+}
+
+.character-modal-select .MuiSelect-select {
+  color: #fff !important;
+  background: #23243a !important;
+  border-radius: 4px;
+}
+.character-modal-select .MuiSelect-icon {
+  color: #fff !important;
+}
+.character-modal-select .MuiSelect-multiple .MuiChip-root {
+  background: #35365a;
+  color: #fff;
+}
+.character-modal-select .MuiPaper-root,
+.character-modal-select .MuiMenu-paper,
+.character-modal-select .MuiPopover-paper {
+  background: #23243a !important;
+  color: #fff !important;
+}
+.character-modal-select .MuiMenuItem-root {
+  color: #fff !important;
+  background: #23243a !important;
+}
+.character-modal-select .MuiMenuItem-root.Mui-selected {
+  background: #35365a !important;
+  color: #fff !important;
+}
+.character-modal-select .MuiCheckbox-root {
+  color: #bbb !important;
+}
+.character-modal-select .MuiCheckbox-root.Mui-checked {
+  color: #fff !important;
+}
+.character-modal-select .MuiListItemText-primary {
+  color: #fff !important;
+}
+.character-modal-select .MuiList-root {
+  background: #23243a !important;
 }
 
 .add-character-btn {

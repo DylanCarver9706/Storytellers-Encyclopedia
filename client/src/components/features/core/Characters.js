@@ -17,6 +17,14 @@ import {
   deleteCharacter,
   updateCharacter,
 } from "../../../services/charactersService";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+} from "@mui/material";
 import "../../../styles/components/core/Characters.css";
 
 // Custom node component
@@ -112,12 +120,12 @@ const CharactersFlow = ({ campaignId }) => {
   const [createFormData, setCreateFormData] = useState({
     name: "",
     bio: "",
-    parentId: null,
+    parents: [],
   });
   const [editFormData, setEditFormData] = useState({
     name: "",
     bio: "",
-    parentId: null,
+    parents: [],
   });
 
   useEffect(() => {
@@ -137,8 +145,8 @@ const CharactersFlow = ({ campaignId }) => {
           data: {
             label: character.name,
             bio: character.bio,
-            parentId: character.parentId,
             attributes: character.attributes,
+            parents: character.parents || [],
             onEdit: handleEdit,
             onDelete: handleDelete,
           },
@@ -147,13 +155,13 @@ const CharactersFlow = ({ campaignId }) => {
         if (process.env.REACT_APP_ENV === "development")
           console.log("characterNodes:", characterNodes);
 
-        const characterEdges = characters
-          .filter((character) => character.parentId)
-          .map((character) => ({
-            id: `e${character.parentId}-${character._id}`,
-            source: character.parentId,
+        const characterEdges = characters.flatMap((character) =>
+          (character.parents || []).map((parentId) => ({
+            id: `e${parentId}-${character._id}`,
+            source: parentId,
             target: character._id,
-          }));
+          }))
+        );
 
         if (process.env.REACT_APP_ENV === "development")
           console.log("characterEdges:", characterEdges);
@@ -207,7 +215,7 @@ const CharactersFlow = ({ campaignId }) => {
           setEditFormData({
             name: character.data.label,
             bio: character.data.bio || "",
-            parentId: character.data.parentId || null,
+            parents: character.data.parents || [],
           });
           setIsEditCharacterModalOpen(true);
         }
@@ -255,7 +263,7 @@ const CharactersFlow = ({ campaignId }) => {
           label: newCharacter.name,
           bio: newCharacter.bio,
           attributes: newCharacter.attributes,
-          parentId: newCharacter.parentId,
+          parents: newCharacter.parents || [],
           onEdit: handleEdit,
           onDelete: handleDelete,
         },
@@ -263,13 +271,13 @@ const CharactersFlow = ({ campaignId }) => {
 
       setNodes((nds) => [...nds, newNode]);
 
-      if (createFormData.parentId) {
-        const newEdge = {
-          id: `e${createFormData.parentId}-${newCharacter._id}`,
-          source: createFormData.parentId,
+      if (Array.isArray(createFormData.parents)) {
+        const newEdges = createFormData.parents.map((parentId) => ({
+          id: `e${parentId}-${newCharacter._id}`,
+          source: parentId,
           target: newCharacter._id,
-        };
-        setEdges((eds) => [...eds, newEdge]);
+        }));
+        setEdges((eds) => [...eds, ...newEdges]);
       }
 
       // Wait for the next render cycle to ensure the node is added
@@ -278,7 +286,7 @@ const CharactersFlow = ({ campaignId }) => {
       }, 0);
 
       setIsNewCharacterModalOpen(false);
-      setCreateFormData({ name: "", bio: "", parentId: null });
+      setCreateFormData({ name: "", bio: "", parents: [] });
     } catch (error) {
       console.error("Error creating character:", error);
     }
@@ -303,7 +311,7 @@ const CharactersFlow = ({ campaignId }) => {
                 label: updatedCharacter.name,
                 bio: updatedCharacter.bio,
                 attributes: updatedCharacter.attributes,
-                parentId: updatedCharacter.parentId,
+                parents: updatedCharacter.parents || [],
               },
             };
           }
@@ -321,15 +329,15 @@ const CharactersFlow = ({ campaignId }) => {
 
         let finalEdges = edgesWithoutCharacter;
 
-        // Add new edge if there's a parent
-        if (editFormData.parentId) {
+        // Add new edges for all parents
+        if (Array.isArray(editFormData.parents)) {
           finalEdges = [
             ...edgesWithoutCharacter,
-            {
-              id: `e${editFormData.parentId}-${updatedCharacter._id}`,
-              source: editFormData.parentId,
+            ...editFormData.parents.map((parentId) => ({
+              id: `e${parentId}-${updatedCharacter._id}`,
+              source: parentId,
               target: updatedCharacter._id,
-            },
+            })),
           ];
         }
 
@@ -338,26 +346,47 @@ const CharactersFlow = ({ campaignId }) => {
 
       setIsEditCharacterModalOpen(false);
       setEditingCharacterId(null);
-      setEditFormData({ name: "", bio: "", parentId: null });
+      setEditFormData({ name: "", bio: "", parents: [] });
     } catch (error) {
       console.error("Error updating character:", error);
     }
   };
 
   const handleCreateInputChange = (e) => {
-    const { name, value } = e.target;
-    setCreateFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, options, multiple } = e.target;
+    if (multiple) {
+      // Multi-select
+      const selected = Array.from(options)
+        .filter((opt) => opt.selected)
+        .map((opt) => opt.value);
+      setCreateFormData((prev) => ({
+        ...prev,
+        [name]: selected,
+      }));
+    } else {
+      setCreateFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleEditInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, options, multiple } = e.target;
+    if (multiple) {
+      const selected = Array.from(options)
+        .filter((opt) => opt.selected)
+        .map((opt) => opt.value);
+      setEditFormData((prev) => ({
+        ...prev,
+        [name]: selected,
+      }));
+    } else {
+      setEditFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleNodeClick = useCallback((event, node) => {
@@ -367,6 +396,55 @@ const CharactersFlow = ({ campaignId }) => {
       setIsViewModalOpen(true);
     }
   }, []);
+
+  // Add onConnect handler for drag-and-drop edge creation
+  const handleConnect = useCallback(
+    async (params) => {
+      const { source, target } = params;
+      if (!source || !target) return;
+      // Prevent self-parenting
+      if (source === target) return;
+      // Find the child node
+      const childNode = nodes.find((n) => n.id === target);
+      if (!childNode) return;
+      // If already a parent, do nothing
+      if ((childNode.data.parents || []).includes(source)) return;
+      // Update parents array
+      const newParents = [...(childNode.data.parents || []), source];
+      try {
+        // Persist to backend
+        await updateCharacter(target, {
+          ...childNode.data,
+          parents: newParents,
+        });
+        // Update local state
+        setNodes((nds) =>
+          nds.map((node) =>
+            node.id === target
+              ? {
+                  ...node,
+                  data: {
+                    ...node.data,
+                    parents: newParents,
+                  },
+                }
+              : node
+          )
+        );
+        setEdges((eds) => [
+          ...eds,
+          {
+            id: `e${source}-${target}`,
+            source,
+            target,
+          },
+        ]);
+      } catch (err) {
+        console.error("Error updating parents via edge connect:", err);
+      }
+    },
+    [nodes, setEdges, setNodes]
+  );
 
   return (
     <>
@@ -385,6 +463,7 @@ const CharactersFlow = ({ campaignId }) => {
           edges={edges}
           onNodesChange={onNodesChangeHandler}
           onEdgesChange={onEdgesChange}
+          onConnect={handleConnect}
           onNodeClick={handleNodeClick}
           nodeTypes={nodeTypes}
           fitView
@@ -436,8 +515,9 @@ const CharactersFlow = ({ campaignId }) => {
                         (n) => n.id === viewingCharacterId
                       );
                       const pronouns =
-                        charNode?.data?.attributes?.["Basic Information"]
-                          ?.["Pronouns"]?.value;
+                        charNode?.data?.attributes?.["Basic Information"]?.[
+                          "Pronouns"
+                        ]?.value;
                       if (
                         pronouns &&
                         typeof pronouns === "string" &&
@@ -467,18 +547,22 @@ const CharactersFlow = ({ campaignId }) => {
                   </div>
                   <div className="character-modal-section">
                     <h3 className="character-modal-section-title">
-                      Parent Character
+                      Parent Characters
                     </h3>
                     <p className="character-modal-section-value">
-                      {nodes.find((n) => n.id === viewingCharacterId)?.data
-                        .parentId
-                        ? nodes.find(
-                            (n) =>
-                              n.id ===
-                              nodes.find((n) => n.id === viewingCharacterId)
-                                ?.data.parentId
-                          )?.data.label
-                        : "None"}
+                      {(() => {
+                        const parents =
+                          nodes.find((n) => n.id === viewingCharacterId)?.data
+                            .parents || [];
+                        if (parents.length === 0) return "None";
+                        return parents
+                          .map(
+                            (parentId) =>
+                              nodes.find((n) => n.id === parentId)?.data
+                                .label || "Unknown"
+                          )
+                          .join(", ");
+                      })()}
                     </p>
                   </div>
                 </>
@@ -527,24 +611,43 @@ const CharactersFlow = ({ campaignId }) => {
                 <div className="character-modal-section">
                   <label
                     className="character-modal-section-title"
-                    htmlFor="create-parent"
+                    htmlFor="create-parents"
                   >
-                    Parent Character
+                    Parent Characters
                   </label>
-                  <select
-                    id="create-parent"
-                    name="parentId"
-                    value={createFormData.parentId || ""}
-                    onChange={handleCreateInputChange}
-                    className="character-modal-select"
-                  >
-                    <option value="">None</option>
-                    {nodes.map((node) => (
-                      <option key={node.id} value={node.id}>
-                        {node.data.label}
-                      </option>
-                    ))}
-                  </select>
+                  <FormControl fullWidth>
+                    <InputLabel id="create-parents-label">
+                      Parent Characters
+                    </InputLabel>
+                    <Select
+                      labelId="create-parents-label"
+                      id="create-parents"
+                      multiple
+                      value={createFormData.parents}
+                      onChange={(e) => {
+                        setCreateFormData((prev) => ({
+                          ...prev,
+                          parents: e.target.value,
+                        }));
+                      }}
+                      renderValue={(selected) =>
+                        nodes
+                          .filter((node) => selected.includes(node.id))
+                          .map((node) => node.data.label)
+                          .join(", ")
+                      }
+                      className="character-modal-select"
+                    >
+                      {nodes.map((node) => (
+                        <MenuItem key={node.id} value={node.id}>
+                          <Checkbox
+                            checked={createFormData.parents.includes(node.id)}
+                          />
+                          <ListItemText primary={node.data.label} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </div>
                 <div className="character-modal-actions">
                   <button
@@ -594,23 +697,40 @@ const CharactersFlow = ({ campaignId }) => {
                   </div>
                   <div className="character-modal-section">
                     <h3 className="character-modal-section-title">
-                      Parent Character
+                      Parent Characters
                     </h3>
-                    <select
-                      name="parentId"
-                      value={editFormData.parentId || ""}
-                      onChange={handleEditInputChange}
-                      className="character-modal-select"
-                    >
-                      <option value="">None</option>
-                      {nodes
-                        .filter((node) => node.id !== editingCharacterId)
-                        .map((node) => (
-                          <option key={node.id} value={node.id}>
-                            {node.data.label}
-                          </option>
-                        ))}
-                    </select>
+                    <FormControl fullWidth>
+                      <Select
+                        labelId="edit-parents-label"
+                        id="edit-parents"
+                        multiple
+                        value={editFormData.parents}
+                        onChange={(e) => {
+                          setEditFormData((prev) => ({
+                            ...prev,
+                            parents: e.target.value,
+                          }));
+                        }}
+                        renderValue={(selected) =>
+                          nodes
+                            .filter((node) => selected.includes(node.id))
+                            .map((node) => node.data.label)
+                            .join(", ")
+                        }
+                        className="character-modal-select"
+                      >
+                        {nodes
+                          .filter((node) => node.id !== editingCharacterId)
+                          .map((node) => (
+                            <MenuItem key={node.id} value={node.id}>
+                              <Checkbox
+                                checked={editFormData.parents.includes(node.id)}
+                              />
+                              <ListItemText primary={node.data.label} />
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </FormControl>
                   </div>
                   <form onSubmit={handleEditSubmit}>
                     <div className="character-modal-actions">
