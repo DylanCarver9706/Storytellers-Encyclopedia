@@ -114,7 +114,7 @@ const Campaigns = () => {
       <div className="campaigns-header">
         <h1 className="campaigns-title">Campaigns</h1>
         <button
-          className="create-campaign-btn"
+          className="create-campaigns-btn"
           onClick={() => setIsModalOpen(true)}
         >
           Create Campaign
@@ -128,11 +128,11 @@ const Campaigns = () => {
             {ownedCampaigns.map((campaign) => (
               <div
                 key={campaign._id}
-                className="campaign-card"
+                className="campaigns-card"
                 onClick={() => handleCampaignClick(campaign._id)}
               >
-                <h2 className="campaign-title">{campaign.title}</h2>
-                <div className="campaign-actions">
+                <h2 className="campaigns-title">{campaign.title}</h2>
+                <div className="campaigns-actions">
                   <button
                     className="action-btn edit-btn"
                     onClick={(e) => handleEdit(e, campaign)}
@@ -159,11 +159,11 @@ const Campaigns = () => {
             {playerCampaigns.map((campaign) => (
               <div
                 key={campaign._id}
-                className="campaign-card"
+                className="campaigns-card"
                 onClick={() => handleCampaignClick(campaign._id)}
               >
-                <h2 className="campaign-title">{campaign.title}</h2>
-                <p className="campaign-owner">Owner: {campaign.ownerName}</p>
+                <h2 className="campaigns-title">{campaign.title}</h2>
+                <p className="campaigns-owner">Owner: {campaign.ownerName}</p>
               </div>
             ))}
           </div>
