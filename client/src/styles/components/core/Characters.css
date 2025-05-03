@@ -443,3 +443,27 @@
 .character-modal-section-link:hover {
   color: #1976d2;
 }
+
+.character-modal-photo-placeholder {
+  width: 140px;
+  height: 140px;
+  border-radius: 0;
+  background: #35365a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  border: 2px solid #444;
+}
+.character-modal-name-link {
+  display: block;
+  text-align: left;
+  margin-left: 0;
+}
+
+.character-modal-pronouns {
+  font-size: 0.85em;
+  color: #aaa;
+  margin-left: 2px;
+  font-style: italic;
+}

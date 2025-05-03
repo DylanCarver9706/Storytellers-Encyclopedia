@@ -138,6 +138,7 @@ const CharactersFlow = ({ campaignId }) => {
             label: character.name,
             bio: character.bio,
             parentId: character.parentId,
+            attributes: character.attributes,
             onEdit: handleEdit,
             onDelete: handleDelete,
           },
@@ -253,6 +254,7 @@ const CharactersFlow = ({ campaignId }) => {
         data: {
           label: newCharacter.name,
           bio: newCharacter.bio,
+          attributes: newCharacter.attributes,
           parentId: newCharacter.parentId,
           onEdit: handleEdit,
           onDelete: handleDelete,
@@ -300,6 +302,7 @@ const CharactersFlow = ({ campaignId }) => {
                 ...node.data,
                 label: updatedCharacter.name,
                 bio: updatedCharacter.bio,
+                attributes: updatedCharacter.attributes,
                 parentId: updatedCharacter.parentId,
               },
             };
@@ -365,22 +368,6 @@ const CharactersFlow = ({ campaignId }) => {
     }
   }, []);
 
-  const handleViewToEdit = useCallback(
-    (id) => {
-      setViewingCharacterId(null);
-      setIsViewModalOpen(false);
-      setEditingCharacterId(id);
-      const character = nodes.find((n) => n.id === id);
-      setEditFormData({
-        name: character.data.label,
-        bio: character.data.bio,
-        parentId: character.data.parentId,
-      });
-      setIsEditCharacterModalOpen(true);
-    },
-    [nodes]
-  );
-
   return (
     <>
       <div className="characters-header">
@@ -419,13 +406,21 @@ const CharactersFlow = ({ campaignId }) => {
               >
                 ×
               </button>
-              <h2 className="character-modal-title">Character Details</h2>
               {viewingCharacterId && (
                 <>
-                  <div className="character-modal-section">
-                    <h3 className="character-modal-section-title">Name</h3>
+                  <div className="character-modal-photo-placeholder">
+                    {/* Placeholder for character photo */}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      gap: "8px",
+                      marginBottom: "18px",
+                    }}
+                  >
                     <a
-                      className="character-modal-section-link"
+                      className="character-modal-section-link character-modal-name-link"
                       href={`/character/${viewingCharacterId}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -435,12 +430,39 @@ const CharactersFlow = ({ campaignId }) => {
                           .label
                       }
                     </a>
+                    {(() => {
+                      // Find the character node and get pronouns if available
+                      const charNode = nodes.find(
+                        (n) => n.id === viewingCharacterId
+                      );
+                      const pronouns =
+                        charNode?.data?.attributes?.["Basic Information"]
+                          ?.["Pronouns"]?.value;
+                      if (
+                        pronouns &&
+                        typeof pronouns === "string" &&
+                        pronouns.trim() !== ""
+                      ) {
+                        return (
+                          <span className="character-modal-pronouns">
+                            ({pronouns})
+                          </span>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
                   <div className="character-modal-section">
                     <h3 className="character-modal-section-title">Bio</h3>
                     <p className="character-modal-section-value">
-                      {nodes.find((n) => n.id === viewingCharacterId)?.data
-                        .bio || "No bio"}
+                      {(() => {
+                        const bio =
+                          nodes.find((n) => n.id === viewingCharacterId)?.data
+                            .bio || "No bio";
+                        return bio.length > 250
+                          ? bio.slice(0, 250) + "..."
+                          : bio;
+                      })()}
                     </p>
                   </div>
                   <div className="character-modal-section">
