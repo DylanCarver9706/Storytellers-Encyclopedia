@@ -45,14 +45,18 @@ const createCharacter = async (characterData) => {
 };
 
 const updateCharacter = async (id, characterData) => {
-  const { campaignId, ...characterDataWithoutCampaignId } = characterData;
+  // console.log("characterData", characterData);
+  if (characterData.campaignId) {
+    characterData.campaignId = ObjectId.createFromHexString(
+      characterData.campaignId
+    );
+  }
   // Delete the _id from the characterDataWithoutCampaignId if it exists
-  if (characterDataWithoutCampaignId._id) {
-    delete characterDataWithoutCampaignId._id;
+  if (characterData._id) {
+    delete characterData._id;
   }
   const mongoDocument = {
-    ...characterDataWithoutCampaignId,
-    campaignId: ObjectId.createFromHexString(campaignId),
+    ...characterData,
   };
   return await updateMongoDocument(
     collections.charactersCollection,
