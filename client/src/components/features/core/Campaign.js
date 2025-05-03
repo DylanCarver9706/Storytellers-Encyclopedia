@@ -107,6 +107,7 @@ const Campaign = () => {
       </div>
 
       <div className="campaign-content">
+        <Maps campaignId={campaignId} />
         <Timelines campaignId={campaignId} />
         <br />
         <br />
