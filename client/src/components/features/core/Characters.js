@@ -17,72 +17,78 @@ import {
   deleteCharacter,
   updateCharacter,
 } from "../../../services/charactersService";
-import { useNavigate } from "react-router-dom";
+import "../../../styles/components/core/Characters.css";
 
 // Custom node component
 const CharacterNode = ({ data, id }) => {
+  // Placeholder: use initials or icon
+  const initials = data.label
+    ? data.label
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase()
+    : "?";
   return (
-    <div
-      style={{
-        padding: "10px",
-        backgroundColor: "white",
-        border: "1px solid #ddd",
-        borderRadius: "5px",
-        minWidth: "150px",
-      }}
-    >
-      <Handle type="target" position={Position.Top} />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+    <div className="character-node-square">
+      <button
+        className="character-node-icon character-node-edit"
+        title="Edit"
+        onClick={(e) => {
+          e.stopPropagation();
+          data.onEdit(id);
         }}
       >
-        <span>{data.label}</span>
-        <div
-          style={{
-            display: "flex",
-            gap: "5px",
-          }}
+        {/* Skeleton pencil icon SVG */}
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              data.onEdit(id);
-            }}
-            style={{
-              padding: "4px 8px",
-              backgroundColor: "#2196F3",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "12px",
-            }}
-          >
-            Edit
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              data.onDelete(id);
-            }}
-            style={{
-              padding: "4px 8px",
-              backgroundColor: "#f44336",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "12px",
-            }}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-      <Handle type="source" position={Position.Bottom} />
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z" />
+        </svg>
+      </button>
+      <button
+        className="character-node-icon character-node-delete"
+        title="Delete"
+        onClick={(e) => {
+          e.stopPropagation();
+          data.onDelete(id);
+        }}
+      >
+        {/* Skeleton trashcan icon SVG */}
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+        </svg>
+      </button>
+      <Handle
+        type="target"
+        position={Position.Top}
+        className="characters-handle"
+      />
+      <div className="character-node-image-placeholder">{initials}</div>
+      <div className="character-node-label">{data.label}</div>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="characters-handle"
+      />
     </div>
   );
 };
@@ -113,8 +119,6 @@ const CharactersFlow = ({ campaignId }) => {
     bio: "",
     parentId: null,
   });
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -361,35 +365,35 @@ const CharactersFlow = ({ campaignId }) => {
     }
   }, []);
 
-  const handleViewToEdit = useCallback((id) => {
-    setViewingCharacterId(null);
-    setIsViewModalOpen(false);
-    setEditingCharacterId(id);
-    setIsEditCharacterModalOpen(true);
-  }, []);
+  const handleViewToEdit = useCallback(
+    (id) => {
+      setViewingCharacterId(null);
+      setIsViewModalOpen(false);
+      setEditingCharacterId(id);
+      const character = nodes.find((n) => n.id === id);
+      setEditFormData({
+        name: character.data.label,
+        bio: character.data.bio,
+        parentId: character.data.parentId,
+      });
+      setIsEditCharacterModalOpen(true);
+    },
+    [nodes]
+  );
 
   return (
     <>
       <div className="characters-header">
         <button
           onClick={() => setIsNewCharacterModalOpen(true)}
-          style={{
-            position: "absolute",
-            zIndex: 4,
-            padding: "8px 16px",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+          className="add-character-btn"
         >
           Add Character
         </button>
       </div>
-      <div style={{ width: "80vw", height: "50vh", color: "black" }}>
+      <div className="characters-flow-container">
         <ReactFlow
-          style={{ width: "80vw", height: "50vh", color: "black" }}
+          className="characters-reactflow"
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChangeHandler}
@@ -403,50 +407,47 @@ const CharactersFlow = ({ campaignId }) => {
         </ReactFlow>
 
         {isViewModalOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1000,
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "white",
-                padding: "20px",
-                borderRadius: "8px",
-                width: "400px",
-              }}
-            >
-              <h2>Character Details</h2>
+          <div className="character-modal-overlay">
+            <div className="character-modal-content">
+              <button
+                className="character-modal-close-x"
+                onClick={() => {
+                  setIsViewModalOpen(false);
+                  setViewingCharacterId(null);
+                }}
+                aria-label="Close"
+              >
+                ×
+              </button>
+              <h2 className="character-modal-title">Character Details</h2>
               {viewingCharacterId && (
                 <>
-                  <div style={{ marginBottom: "15px" }}>
-                    <h3 style={{ marginBottom: "5px" }}>Name</h3>
-                    <p>
+                  <div className="character-modal-section">
+                    <h3 className="character-modal-section-title">Name</h3>
+                    <a
+                      className="character-modal-section-link"
+                      href={`/character/${viewingCharacterId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {
                         nodes.find((n) => n.id === viewingCharacterId)?.data
                           .label
                       }
-                    </p>
+                    </a>
                   </div>
-                  <div style={{ marginBottom: "15px" }}>
-                    <h3 style={{ marginBottom: "5px" }}>Bio</h3>
-                    <p>
+                  <div className="character-modal-section">
+                    <h3 className="character-modal-section-title">Bio</h3>
+                    <p className="character-modal-section-value">
                       {nodes.find((n) => n.id === viewingCharacterId)?.data
                         .bio || "No bio"}
                     </p>
                   </div>
-                  <div style={{ marginBottom: "15px" }}>
-                    <h3 style={{ marginBottom: "5px" }}>Parent Character</h3>
-                    <p>
+                  <div className="character-modal-section">
+                    <h3 className="character-modal-section-title">
+                      Parent Character
+                    </h3>
+                    <p className="character-modal-section-value">
                       {nodes.find((n) => n.id === viewingCharacterId)?.data
                         .parentId
                         ? nodes.find(
@@ -458,61 +459,6 @@ const CharactersFlow = ({ campaignId }) => {
                         : "None"}
                     </p>
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      gap: "10px",
-                    }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsViewModalOpen(false);
-                        setViewingCharacterId(null);
-                      }}
-                      style={{
-                        padding: "8px 16px",
-                        backgroundColor: "#f44336",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Close
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleViewToEdit(viewingCharacterId)}
-                      style={{
-                        padding: "8px 16px",
-                        backgroundColor: "#2196F3",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        navigate(`/character/${viewingCharacterId}`)
-                      }
-                      style={{
-                        padding: "8px 16px",
-                        backgroundColor: "#4CAF50",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      View More
-                    </button>
-                  </div>
                 </>
               )}
             </div>
@@ -520,63 +466,55 @@ const CharactersFlow = ({ campaignId }) => {
         )}
 
         {isNewCharacterModalOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1000,
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "white",
-                padding: "20px",
-                borderRadius: "8px",
-                width: "400px",
-              }}
-            >
-              <h2>Create Character</h2>
+          <div className="character-modal-overlay">
+            <div className="character-modal-content">
+              <h2 className="character-modal-title">Create Character</h2>
               <form onSubmit={handleCreateSubmit}>
-                <div style={{ marginBottom: "15px" }}>
-                  <label style={{ display: "block", marginBottom: "5px" }}>
+                <div className="character-modal-section">
+                  <label
+                    className="character-modal-section-title"
+                    htmlFor="create-name"
+                  >
                     Name
                   </label>
                   <input
+                    id="create-name"
                     type="text"
                     name="name"
                     value={createFormData.name}
                     onChange={handleCreateInputChange}
                     required
-                    style={{ width: "100%", padding: "8px" }}
+                    className="character-modal-input"
                   />
                 </div>
-                <div style={{ marginBottom: "15px" }}>
-                  <label style={{ display: "block", marginBottom: "5px" }}>
+                <div className="character-modal-section">
+                  <label
+                    className="character-modal-section-title"
+                    htmlFor="create-bio"
+                  >
                     Bio
                   </label>
                   <textarea
+                    id="create-bio"
                     name="bio"
                     value={createFormData.bio}
                     onChange={handleCreateInputChange}
-                    style={{ width: "100%", padding: "8px", height: "100px" }}
+                    className="character-modal-textarea"
                   />
                 </div>
-                <div style={{ marginBottom: "15px" }}>
-                  <label style={{ display: "block", marginBottom: "5px" }}>
+                <div className="character-modal-section">
+                  <label
+                    className="character-modal-section-title"
+                    htmlFor="create-parent"
+                  >
                     Parent Character
                   </label>
                   <select
+                    id="create-parent"
                     name="parentId"
                     value={createFormData.parentId || ""}
                     onChange={handleCreateInputChange}
-                    style={{ width: "100%", padding: "8px" }}
+                    className="character-modal-select"
                   >
                     <option value="">None</option>
                     {nodes.map((node) => (
@@ -586,37 +524,17 @@ const CharactersFlow = ({ campaignId }) => {
                     ))}
                   </select>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    gap: "10px",
-                  }}
-                >
+                <div className="character-modal-actions">
                   <button
                     type="button"
+                    className="character-modal-btn character-modal-btn-cancel"
                     onClick={() => setIsNewCharacterModalOpen(false)}
-                    style={{
-                      padding: "8px 16px",
-                      backgroundColor: "#f44336",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    style={{
-                      padding: "8px 16px",
-                      backgroundColor: "#4CAF50",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
+                    className="character-modal-btn character-modal-btn-create"
                   >
                     Create
                   </button>
@@ -627,118 +545,75 @@ const CharactersFlow = ({ campaignId }) => {
         )}
 
         {isEditCharacterModalOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1000,
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "white",
-                padding: "20px",
-                borderRadius: "8px",
-                width: "400px",
-              }}
-            >
-              <h2>Edit Character</h2>
-              <form onSubmit={handleEditSubmit}>
-                <div style={{ marginBottom: "15px" }}>
-                  <label style={{ display: "block", marginBottom: "5px" }}>
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={editFormData.name}
-                    onChange={handleEditInputChange}
-                    required
-                    style={{ width: "100%", padding: "8px" }}
-                  />
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                  <label style={{ display: "block", marginBottom: "5px" }}>
-                    Bio
-                  </label>
-                  <textarea
-                    name="bio"
-                    value={editFormData.bio}
-                    onChange={handleEditInputChange}
-                    style={{ width: "100%", padding: "8px", height: "100px" }}
-                  />
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                  <label style={{ display: "block", marginBottom: "5px" }}>
-                    Parent Character
-                  </label>
-                  <select
-                    name="parentId"
-                    value={editFormData.parentId || ""}
-                    onChange={handleEditInputChange}
-                    style={{ width: "100%", padding: "8px" }}
-                  >
-                    <option value="">None</option>
-                    {nodes
-                      .filter((node) => node.id !== editingCharacterId)
-                      .map((node) => (
-                        <option key={node.id} value={node.id}>
-                          {node.data.label}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    gap: "10px",
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsEditCharacterModalOpen(false);
-                      setEditingCharacterId(null);
-                      setEditFormData({
-                        name: "",
-                        bio: "",
-                        parentId: null,
-                      });
-                    }}
-                    style={{
-                      padding: "8px 16px",
-                      backgroundColor: "#f44336",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    style={{
-                      padding: "8px 16px",
-                      backgroundColor: "#4CAF50",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Update
-                  </button>
-                </div>
-              </form>
+          <div className="character-modal-overlay">
+            <div className="character-modal-content">
+              <h2 className="character-modal-title">Edit Character</h2>
+              {editingCharacterId && (
+                <>
+                  <div className="character-modal-section">
+                    <h3 className="character-modal-section-title">Name</h3>
+                    <input
+                      type="text"
+                      name="name"
+                      value={editFormData.name}
+                      onChange={handleEditInputChange}
+                      required
+                      className="character-modal-input"
+                    />
+                  </div>
+                  <div className="character-modal-section">
+                    <h3 className="character-modal-section-title">Bio</h3>
+                    <textarea
+                      name="bio"
+                      value={editFormData.bio}
+                      onChange={handleEditInputChange}
+                      className="character-modal-textarea"
+                    />
+                  </div>
+                  <div className="character-modal-section">
+                    <h3 className="character-modal-section-title">
+                      Parent Character
+                    </h3>
+                    <select
+                      name="parentId"
+                      value={editFormData.parentId || ""}
+                      onChange={handleEditInputChange}
+                      className="character-modal-select"
+                    >
+                      <option value="">None</option>
+                      {nodes
+                        .filter((node) => node.id !== editingCharacterId)
+                        .map((node) => (
+                          <option key={node.id} value={node.id}>
+                            {node.data.label}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <form onSubmit={handleEditSubmit}>
+                    <div className="character-modal-actions">
+                      <button
+                        type="button"
+                        className="character-modal-btn character-modal-btn-cancel"
+                        onClick={() => {
+                          setIsEditCharacterModalOpen(false);
+                          setEditingCharacterId(null);
+                          setViewingCharacterId(null);
+                          setIsViewModalOpen(false);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="character-modal-btn character-modal-btn-update"
+                      >
+                        Update
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
             </div>
           </div>
         )}

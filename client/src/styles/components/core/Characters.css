@@ -199,3 +199,247 @@
 .save-btn:hover {
   background-color: #45a049;
 }
+
+/* Node styles */
+.character-node-square {
+  width: 150px;
+  height: 150px;
+  background-color: #23243a;
+  border: 2px solid #444;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  position: relative;
+}
+
+.character-node-icon {
+  position: absolute;
+  top: 6px;
+  width: 28px;
+  height: 28px;
+  background: #23243a;
+  border: 1.5px solid #444;
+  border-radius: 50%;
+  color: #bbb;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+  z-index: 2;
+  padding: 0;
+}
+.character-node-edit {
+  left: 6px;
+}
+.character-node-delete {
+  right: 6px;
+}
+.character-node-square:hover .character-node-icon {
+  opacity: 1;
+  pointer-events: auto;
+}
+.character-node-icon:hover {
+  background: #35365a;
+  color: #fff;
+  border-color: #3f51b5;
+}
+
+.character-node-image-placeholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #35365a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  margin-bottom: 12px;
+  border: 2px solid #444;
+}
+.character-node-label {
+  font-weight: 600;
+  font-size: 18px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 90%;
+}
+
+/* Modal styles */
+.character-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(20, 20, 30, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.character-modal-content {
+  background-color: #23243a;
+  color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+.character-modal-title {
+  color: #fff;
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 1.5rem;
+}
+.character-modal-section {
+  margin-bottom: 15px;
+}
+.character-modal-section-title {
+  display: block;
+  margin-bottom: 5px;
+  color: #bbb;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.character-modal-section-value {
+  color: #fff;
+  margin: 0;
+}
+.character-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.character-modal-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.character-modal-btn-cancel {
+  background-color: #444;
+  color: #fff;
+}
+.character-modal-btn-edit {
+  background-color: #3f51b5;
+  color: #fff;
+}
+.character-modal-btn-delete {
+  background-color: #f44336;
+  color: #fff;
+}
+.character-modal-btn-create {
+  background-color: #4caf50;
+  color: #fff;
+}
+.character-modal-btn-update {
+  background-color: #4caf50;
+  color: #fff;
+}
+.character-modal-input {
+  width: 100%;
+  padding: 8px;
+  background: #23243a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+.character-modal-textarea {
+  width: 100%;
+  padding: 8px;
+  height: 100px;
+  background: #23243a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+}
+.character-modal-select {
+  width: 100%;
+  padding: 8px;
+  background: #23243a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.add-character-btn {
+  position: absolute;
+  z-index: 4;
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.add-character-btn:hover {
+  background-color: #45a049;
+}
+
+.characters-flow-container {
+  width: 80vw;
+  height: 50vh;
+  color: black;
+  position: relative;
+}
+
+.characters-reactflow {
+  width: 80vw;
+  height: 50vh;
+  color: black;
+}
+
+.characters-handle {
+  background: "#888";
+}
+
+.character-modal-close-x {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #bbb;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0 8px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.character-modal-close-x:hover {
+  color: #fff;
+}
+
+.character-modal-section-link {
+  color: #4cafef;
+  text-decoration: underline;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.character-modal-section-link:hover {
+  color: #1976d2;
+}
