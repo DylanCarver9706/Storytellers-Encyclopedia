@@ -447,16 +447,17 @@ const CharactersFlow = ({ campaignId }) => {
   );
 
   return (
-    <>
+    <div className="characters-section">
       <div className="characters-header">
+        <h2 className="characters-title">Characters</h2>
+      </div>
+      <div className="characters-flow-container">
         <button
           onClick={() => setIsNewCharacterModalOpen(true)}
           className="add-character-btn"
         >
           Add Character
         </button>
-      </div>
-      <div className="characters-flow-container">
         <ReactFlow
           className="characters-reactflow"
           nodes={nodes}
@@ -760,7 +761,7 @@ const CharactersFlow = ({ campaignId }) => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,10 +1,10 @@
-.players-section {
+.characters-list-section {
   background-color: #1a1a1a;
   padding: 2rem;
   overflow-y: auto;
 }
 
-.players-header {
+.characters-list-header {
   position: sticky;
   top: 0;
   background-color: #1a1a1a;
@@ -17,54 +17,14 @@
   align-items: center;
 }
 
-.players-title {
+.characters-list-title {
   color: #ffffff;
   font-size: 1.8rem;
   font-weight: 600;
   margin: 0;
 }
 
-.players-invite-btn {
-  padding: 0.6rem 1.2rem;
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.players-invite-btn:hover {
-  background-color: #357abd;
-}
-
-.players-list-container {
-  margin-top: 1rem;
-}
-
-.players-loading {
-  color: #888;
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.6;
-  }
-}
-
-.players-list {
+.characters-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -73,7 +33,7 @@
   gap: 1rem;
 }
 
-.players-item {
+.character-list-item {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -83,12 +43,12 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.players-item:hover {
+.character-list-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.players-avatar {
+.character-avatar {
   width: 40px;
   height: 40px;
   background-color: #4a90e2;
@@ -101,7 +61,7 @@
   font-size: 1.2rem;
 }
 
-.invite-players-item {
+.create-character-item {
   cursor: pointer;
   opacity: 0.8;
   transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
@@ -109,30 +69,23 @@
   border: 2px dashed #4a90e2;
 }
 
-.invite-players-item:hover {
+.create-character-item:hover {
   opacity: 1;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.invite-avatar {
+.create-avatar {
   background-color: transparent;
   border: 2px dashed #4a90e2;
   color: #4a90e2;
   font-size: 1.5rem;
 }
 
-.players-name {
+.character-name {
   color: #ffffff;
   font-size: 1rem;
   font-weight: 500;
-}
-
-.players-empty {
-  color: #888;
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
 }
 
 /* Modal Styles */
@@ -171,7 +124,7 @@
   margin: 0;
 }
 
-.modal-close-btn {
+.close-btn {
   background: none;
   border: none;
   color: #888;
@@ -181,7 +134,7 @@
   transition: color 0.3s ease;
 }
 
-.modal-close-btn:hover {
+.close-btn:hover {
   color: #ffffff;
 }
 
@@ -196,7 +149,8 @@
   font-size: 0.9rem;
 }
 
-.form-group input {
+.form-group input,
+.form-group textarea {
   width: 100%;
   padding: 0.8rem;
   border: 1px solid #333;
@@ -207,9 +161,21 @@
   transition: border-color 0.3s ease;
 }
 
-.form-group input:focus {
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
   outline: none;
   border-color: #4a90e2;
+}
+
+.error-message {
+  color: #ff6b6b;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .modal-actions {
@@ -248,27 +214,15 @@
   background-color: #357abd;
 }
 
-.error-message {
-  color: #ff6b6b;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.success-message {
-  color: #4caf50;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-}
-
 /* Responsive adjustments */
 @media (max-width: 1200px) {
-  .players-section {
+  .characters-list-section {
     width: 250px;
   }
 }
 
 @media (max-width: 768px) {
-  .players-section {
+  .characters-list-section {
     position: relative;
     top: 0;
     width: 100%;
@@ -278,23 +232,15 @@
     padding: 1.5rem;
   }
 
-  .players-header {
+  .characters-list-header {
     position: relative;
     padding: 0 0 1rem 0;
-  }
-
-  .players-list {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
 
 @media (max-width: 480px) {
-  .players-section {
+  .characters-list-section {
     padding: 1rem;
-  }
-
-  .players-list {
-    grid-template-columns: 1fr;
   }
 
   .modal-content {

@@ -70,7 +70,8 @@ const Timelines = ({ campaignId }) => {
     }
   };
 
-  const handleEdit = (timeline) => {
+  const handleEdit = (e, timeline) => {
+    e.stopPropagation();
     setEditingTimeline(timeline);
     setFormData({
       name: timeline.name,
@@ -79,7 +80,8 @@ const Timelines = ({ campaignId }) => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
     if (window.confirm("Are you sure you want to delete this timeline?")) {
       try {
         await deleteTimeline(id);
@@ -107,53 +109,71 @@ const Timelines = ({ campaignId }) => {
     <div className="timelines-section">
       <div className="timelines-header">
         <h2>Timelines</h2>
-        <button
-          className="create-timeline-btn"
-          onClick={() => setIsModalOpen(true)}
-        >
-          Create Timeline
-        </button>
       </div>
 
       <div className="timelines-grid">
-        {timelines.length > 0 ? (
-          timelines.map((timeline) => (
-            <div
-              className="timeline-card"
-              key={timeline._id}
-              onClick={() => handleTimelineClick(timeline._id)}
-              style={{ cursor: "pointer" }}
+        {timelines.map((timeline) => (
+          <div
+            className="timelines-card"
+            key={timeline._id}
+            onClick={() => handleTimelineClick(timeline._id)}
+            style={{ cursor: "pointer" }}
+          >
+            <button
+              className="timeline-icon timeline-edit"
+              title="Edit"
+              onClick={(e) => handleEdit(e, timeline)}
             >
-              <div className="timeline-image-container">
-                <img
-                  src={timeline.mapImage || DEFAULT_MAP_IMAGE}
-                  alt={`Map for ${timeline.name}`}
-                  className="timeline-map-image"
-                />
-              </div>
-              <h3>{timeline.name}</h3>
-              <div
-                className="timeline-actions"
-                onClick={(e) => e.stopPropagation()}
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <button
-                  className="action-btn edit-btn"
-                  onClick={() => handleEdit(timeline)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="action-btn delete-btn"
-                  onClick={() => handleDelete(timeline._id)}
-                >
-                  Delete
-                </button>
-              </div>
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z" />
+              </svg>
+            </button>
+            <button
+              className="timeline-icon timeline-delete"
+              title="Delete"
+              onClick={(e) => handleDelete(e, timeline._id)}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+              </svg>
+            </button>
+            <h3 className="timelines-title">{timeline.name}</h3>
+            <div className="timelines-image-container">
+              <img
+                src={timeline.mapImage || DEFAULT_MAP_IMAGE}
+                alt={`Map for ${timeline.name}`}
+                className="timelines-map-image"
+              />
             </div>
-          ))
-        ) : (
-          <p>No timelines yet. Create one to get started!</p>
-        )}
+          </div>
+        ))}
+        <div
+          className="timelines-card create-timeline-card"
+          onClick={() => setIsModalOpen(true)}
+        >
+          <div className="create-timeline-plus">+</div>
+          <h3>Create Timeline</h3>
+        </div>
       </div>
 
       {isModalOpen && (

@@ -67,12 +67,6 @@ const Players = ({ campaignId }) => {
       <div className="players-section">
         <div className="players-header">
           <h3 className="players-title">Players</h3>
-          <button
-            className="players-invite-btn"
-            onClick={() => setIsInviteModalOpen(true)}
-          >
-            Invite Player
-          </button>
         </div>
         <div className="players-loading">Loading players...</div>
       </div>
@@ -83,29 +77,26 @@ const Players = ({ campaignId }) => {
     <div className="players-section">
       <div className="players-header">
         <h3 className="players-title">Players</h3>
-        <button
-          className="players-invite-btn"
-          onClick={() => setIsInviteModalOpen(true)}
-        >
-          Invite Player
-        </button>
       </div>
 
       <div className="players-list-container">
-        {players.length > 0 ? (
-          <ul className="players-list">
-            {players.map((player) => (
-              <li key={player._id} className="player-item">
-                <div className="player-avatar">
-                  {player.name.charAt(0).toUpperCase()}
-                </div>
-                <span className="player-name">{player.name}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="players-empty">No players added yet</p>
-        )}
+        <ul className="players-list">
+          {players.map((player) => (
+            <li key={player._id} className="players-item">
+              <div className="players-avatar">
+                {player.name.charAt(0).toUpperCase()}
+              </div>
+              <span className="players-name">{player.name}</span>
+            </li>
+          ))}
+          <li
+            className="players-item invite-players-item"
+            onClick={() => setIsInviteModalOpen(true)}
+          >
+            <div className="players-avatar invite-avatar">+</div>
+            <span className="players-name">Invite Player</span>
+          </li>
+        </ul>
       </div>
 
       {isInviteModalOpen && (

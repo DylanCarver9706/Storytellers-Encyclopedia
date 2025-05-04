@@ -5,6 +5,7 @@ import Timelines from "./Timelines";
 import Characters from "./Characters";
 import Maps from "./Maps";
 import Players from "./Players";
+import CharactersList from "./CharactersList";
 import CampaignSidebar from "./CampaignSidebar";
 import "../../../styles/components/core/Campaign.css";
 import Spinner from "../../common/Spinner";
@@ -46,16 +47,19 @@ const Campaign = () => {
       <div className="campaign-main">
         <div className="campaign-header">
           <h1 className="campaign-title">{campaign.title}</h1>
-          <Players campaignId={campaignId} />
         </div>
         <div className="campaign-content">
-          <Maps campaignId={campaignId} />
           <Timelines campaignId={campaignId} />
-          <br />
-          <br />
-          <br />
-          <br />
+          <Maps campaignId={campaignId} />
           <Characters campaignId={campaignId} />
+        </div>
+      </div>
+      <div className="campaign-right-sidebar">
+        {/* <div className="right-sidebar-section">
+        </div> */}
+        <div className="right-sidebar-section">
+          <Players campaignId={campaignId} />
+          <CharactersList campaignId={campaignId} />
         </div>
       </div>
     </div>

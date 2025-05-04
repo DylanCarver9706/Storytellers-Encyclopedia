@@ -7,9 +7,10 @@
 
 .campaign-main {
   flex: 1;
-  margin-left: 300px;
+  margin-left: 275px;
+  margin-right: 300px;
   padding: 2rem;
-  max-width: 1200px;
+  max-width: calc(100% - 600px);
 }
 
 .campaign-header {
@@ -268,12 +269,62 @@
   font-size: 0.9rem;
 }
 
+.campaign-right-sidebar {
+  width: 300px;
+  position: fixed;
+  right: 0;
+  top: 80px;
+  height: calc(100vh - 80px);
+  background-color: #1a1a1a;
+  border-left: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.campaign-right-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.campaign-right-sidebar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.right-sidebar-section {
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.right-sidebar-section::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 /* Responsive adjustments */
+@media (max-width: 1200px) {
+  .campaign-main {
+    margin-right: 250px;
+    max-width: calc(100% - 550px);
+  }
+
+  .campaign-right-sidebar {
+    width: 250px;
+  }
+}
+
 @media (max-width: 768px) {
   .campaign-main {
     margin-left: 200px;
+    margin-right: 0;
     padding: 1.5rem;
+    max-width: calc(100% - 200px);
   }
+
+  .campaign-right-sidebar {
+    display: none;
+  }
+
   .campaign-title {
     font-size: 2rem;
   }
@@ -282,9 +333,13 @@
 @media (max-width: 480px) {
   .campaign-container {
     padding-top: 0;
+    flex-direction: column;
   }
+
   .campaign-main {
     margin-left: 0;
+    margin-right: 0;
     padding: 1rem;
+    max-width: 100%;
   }
 }
